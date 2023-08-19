@@ -1,13 +1,13 @@
 namespace checkers
 {
-    public partial class Form1 : Form
+    public partial class AppForm : Form
     {
         Board board;
         private PictureBox[,] _places = new PictureBox[8, 8];
         private Point[] _moves = new Point[2];
         private Point _selectedPiece = new Point();
         bool isStart = false;
-        public Form1()
+        public AppForm()
         {
             InitializeComponent();
             InitializeGameBoard();
@@ -52,6 +52,7 @@ namespace checkers
                     RemoveDisplayOldMoves();
                     _selectedPiece.X = placeCordination[0];
                     _selectedPiece.Y = placeCordination[1];
+
                     _moves = board.checkPieceMoves(_selectedPiece.X, _selectedPiece.Y);
 
                     if (placeSelect.BackColor == Color.Gray)
@@ -93,11 +94,11 @@ namespace checkers
 
         private void setPiece(Point piece)
         {
-            if (board.gameboard[piece.X, piece.Y] == 1)
+            if (board.Gameboard[piece.X, piece.Y] == 1)
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.black;
             }
-            else if (board.gameboard[piece.X, piece.Y] == 2)
+            else if (board.Gameboard[piece.X, piece.Y] == 2)
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.white;
             }
@@ -112,10 +113,17 @@ namespace checkers
 
         private void moveSelectedPiece(Point selectedPiece, Point move)
         {
-            board.movePiece(selectedPiece, move);
+            bool isCaptured = board.movePiece(selectedPiece, move);
             _places[move.X, move.Y].BackColor = Color.Gray;
             _places[selectedPiece.X, selectedPiece.Y].BackColor = Color.Gray;
             setPiece(move);
+            if (isCaptured == true)
+            {
+                Point opponent = move;
+                opponent.X = (selectedPiece.X + move.X) / 2; 
+                opponent.Y = (selectedPiece.Y + move.Y) / 2;
+                removePiece(opponent);
+            }
             removePiece(selectedPiece);
         }
 
