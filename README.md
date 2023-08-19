@@ -1,10 +1,6 @@
 ## Checkers
 Checkers game create in C# and Windows Form
 
-## Features
-✅ working
-🔲
-
 ## Technologies
 Project is created with:
 * C# Language
