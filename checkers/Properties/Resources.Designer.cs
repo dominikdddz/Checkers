@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace checkers.Properties {
+namespace checkers.Properties{
     using System;
     
     

@@ -19,7 +19,7 @@ namespace checkers
             board = new Board();
             Color[] colors = new Color[] { Color.White, Color.Gray };
             int white = 0;
-            
+
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
@@ -74,7 +74,7 @@ namespace checkers
 
                 }
             };
-            
+
             place.MouseClick += (sender3, e3) =>
             {
                 PictureBox place = sender3 as PictureBox;
@@ -83,7 +83,7 @@ namespace checkers
                     moveSelectedPiece(_selectedPiece, _moves[0]);
                 }
             };
-            
+
         }
 
         private void setPiece(int x, int y)
@@ -116,15 +116,15 @@ namespace checkers
 
         private void RemoveDisplayOldMoves()
         {
-            for (int i=0; i< _moves.Length; i++)
+            for (int i = 0; i < _moves.Length; i++)
             {
                 if (_moves[i].IsEmpty) continue;
                 _places[_moves[i].X, _moves[i].Y].BackColor = Color.Gray;
                 _moves[0].X = 0;
                 _moves[0].Y = 0;
             }
-            if (_selectedPiece.X + _selectedPiece.Y>0)
-                _places[_selectedPiece.X,_selectedPiece.Y].BackColor = Color.Gray;
+            if (_selectedPiece.X + _selectedPiece.Y > 0)
+                _places[_selectedPiece.X, _selectedPiece.Y].BackColor = Color.Gray;
 
 
         }
@@ -135,7 +135,7 @@ namespace checkers
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    MouseClickPlace(_places[x, y],x,y);
+                    MouseClickPlace(_places[x, y], x, y);
                 }
             }
         }
