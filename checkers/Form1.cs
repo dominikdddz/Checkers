@@ -6,11 +6,12 @@ namespace checkers
         private PictureBox[,] _places = new PictureBox[8, 8];
         private Point[] _moves = new Point[2];
         private Point _selectedPiece = new Point();
+        bool isStart = false;
         public Form1()
         {
             InitializeComponent();
             InitializeGameBoard();
-
+            isStart=true;
         }
 
         private void InitializeGameBoard()
@@ -27,11 +28,12 @@ namespace checkers
                     _places[x, y] = new PictureBox();
                     _places[x, y].Location = new Point(xLoc, yLoc);
                     _places[x, y].BackColor = colors[white % 2];
+                    _places[x, y].AccessibleDescription=""+x.ToString()+","+y.ToString();
                     _places[x, y].Size = new Size(75, 75);
                     mainBoard.Controls.Add(_places[x, y]);
                     xLoc += 75;
                     white++;
-                    setPiece(x, y);
+                    setPiece(new Point(x, y));
                 }
                 white++;
                 xLoc = 0;
@@ -39,21 +41,22 @@ namespace checkers
             }
         }
 
-        private void MouseClickPlace(PictureBox place, int x, int y)
+        private void MouseClickPlace(PictureBox place)
         {
             place.MouseClick += (sender2, e2) =>
             {
-                PictureBox place = sender2 as PictureBox;
-                if (place.Image != null)
+                PictureBox placeSelect = sender2 as PictureBox;
+                int[] placeCordination = placeSelect.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
+                if (placeSelect.Image != null)
                 {
                     RemoveDisplayOldMoves();
-                    _selectedPiece.X = x;
-                    _selectedPiece.Y = y;
-                    _moves = board.checkPieceMoves(x, y);
+                    _selectedPiece.X = placeCordination[0];
+                    _selectedPiece.Y = placeCordination[1];
+                    _moves = board.checkPieceMoves(_selectedPiece.X, _selectedPiece.Y);
 
-                    if (place.BackColor == Color.Gray)
+                    if (placeSelect.BackColor == Color.Gray)
                     {
-                        place.BackColor = Color.DarkOrange;
+                        placeSelect.BackColor = Color.DarkOrange;
 
                         foreach (var move in _moves)
                         {
@@ -63,7 +66,7 @@ namespace checkers
                     }
                     else
                     {
-                        place.BackColor = Color.Gray;
+                        placeSelect.BackColor = Color.Gray;
 
                         foreach (var move in _moves)
                         {
@@ -77,31 +80,34 @@ namespace checkers
 
             place.MouseClick += (sender3, e3) =>
             {
-                PictureBox place = sender3 as PictureBox;
+                PictureBox placeGreenMove = sender3 as PictureBox;
+                int[] placeGreenCordination = placeGreenMove.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                 if (place.BackColor == Color.Green)
                 {
-                    moveSelectedPiece(_selectedPiece, _moves[0]);
+                    Point GreenMove = new Point(placeGreenCordination[0], placeGreenCordination[1]);
+                    moveSelectedPiece(_selectedPiece, GreenMove);
                 }
             };
 
         }
 
-        private void setPiece(int x, int y)
+        private void setPiece(Point piece)
         {
-            if (board.gameboard[x, y] == 1)
+            if (board.gameboard[piece.X, piece.Y] == 1)
             {
-                _places[x, y].Image = Properties.Resources.black;
+                _places[piece.X, piece.Y].Image = Properties.Resources.black;
             }
-            else if (board.gameboard[x, y] == 2)
+            else if (board.gameboard[piece.X, piece.Y] == 2)
             {
-                _places[x, y].Image = Properties.Resources.white;
+                _places[piece.X, piece.Y].Image = Properties.Resources.white;
             }
-            _places[x, y].SizeMode = PictureBoxSizeMode.CenterImage;
-            RemoveDisplayOldMoves();
+            _places[piece.X, piece.Y].SizeMode = PictureBoxSizeMode.CenterImage;
+            if(isStart==true)
+                RemoveDisplayOldMoves();
         }
-        private void removePiece(int x, int y)
+        private void removePiece(Point piece)
         {
-            _places[x, y].Image = null;
+            _places[piece.X, piece.Y].Image = null;
         }
 
         private void moveSelectedPiece(Point selectedPiece, Point move)
@@ -109,9 +115,8 @@ namespace checkers
             board.movePiece(selectedPiece, move);
             _places[move.X, move.Y].BackColor = Color.Gray;
             _places[selectedPiece.X, selectedPiece.Y].BackColor = Color.Gray;
-            setPiece(move.X, move.Y);
-            removePiece(selectedPiece.X, selectedPiece.Y);
-
+            setPiece(move);
+            removePiece(selectedPiece);
         }
 
         private void RemoveDisplayOldMoves()
@@ -135,7 +140,7 @@ namespace checkers
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    MouseClickPlace(_places[x, y], x, y);
+                    MouseClickPlace(_places[x, y]);
                 }
             }
         }
