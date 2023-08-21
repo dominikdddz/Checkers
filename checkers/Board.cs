@@ -15,30 +15,32 @@ namespace checkers
             get=> _gameboard; 
             set => _gameboard = value;
         }
-        public bool isWhiteTurn;
-        public Player Player1; // White piece
-        public Player Player2; // Black piece
+        public bool isPlayerWhiteTurn;
+        public Player PlayerWhite;
+        public Player PlayerBlack;
 
-        public Board()
+        public Board(string boardSize, string PlayerWhiteName, string PlayerBlackName)
         {
             _gameboard = new int[8, 8] {
                 { 0,1,0,1,0,1,0,1 },
                 { 1,0,1,0,1,0,1,0 },
                 { 0,1,0,1,0,1,0,1 },
-                { 0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,0,0,2,0 },
                 { 0,0,0,0,0,0,0,0 },
                 { 2,0,2,0,2,0,2,0 },
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
             };
-            Player1 = new Player("Player1", 2, 0, 0);
-            Player2 = new Player("Player2", 1, 0, 0);
-            isWhiteTurn = true;
 
+            int white = 2; 
+            int black = 1;
+            PlayerWhite = new Player(PlayerWhiteName, white, 0, 0);
+            PlayerBlack = new Player(PlayerBlackName, black, 0, 0);
+            isPlayerWhiteTurn = true;
         }
         public void changePlayerTurn()
         {
-            isWhiteTurn ^= true;
+            isPlayerWhiteTurn ^= true;
         }
 
         public bool isPLayerWin(Player player)
@@ -74,13 +76,13 @@ namespace checkers
 
         private void CaptureMove(Point actualPosition)
         {
-            if (isWhiteTurn==true)
+            if (isPlayerWhiteTurn==true)
             {
-                Player1.increaseScore();
+                PlayerWhite.increaseScore();
             }
             else
             {
-                Player2.increaseScore();
+                PlayerBlack.increaseScore();
             }
         }
 
@@ -245,9 +247,9 @@ namespace checkers
                         }
                         else if (_gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1] == 2) // check is left place is opponent
                         {
-                            if (SelectedPlace.X + 2 <= 7 && SelectedPlace.Y + 2 <= 7)
+                            if (SelectedPlace.X + 2 <= 7 && SelectedPlace.Y - 2 >= 0)
                             {
-                                if (_gameboard[SelectedPlace.X + 2, SelectedPlace.Y + 2] == 0)
+                                if (_gameboard[SelectedPlace.X + 2, SelectedPlace.Y - 2] == 0)
                                 {
                                     moves[0].X = SelectedPlace.X + 2;
                                     moves[0].Y = SelectedPlace.Y - 2;

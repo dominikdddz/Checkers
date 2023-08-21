@@ -1,3 +1,5 @@
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 namespace checkers
 {
     public partial class AppForm : Form
@@ -8,18 +10,18 @@ namespace checkers
         private Point _selectedPieceLocation;
         bool isStart = false;
         bool isEnd = false;
-        public AppForm()
+        public AppForm(String boardSize, String firstStart, String Player1Name, String Player2Name)
         {
             InitializeComponent();
-            InitializeGameBoard();
+            InitializeGameBoard(boardSize, firstStart, Player1Name, Player2Name);
             isStart = true;
-            Player1Turn.Visible = true;
         }
 
-        private void InitializeGameBoard() // create and display board with piece
+        private void InitializeGameBoard(String boardSize, String firstStart, String Player1Name, String Player2Name) // create and display board with piece
         {
+            board = new Board(boardSize, Player1Name, Player2Name);
+
             int xLoc = 0, yLoc = 0;
-            board = new Board();
             Color[] colors = new Color[] { Color.White, Color.Gray };
             int white = 0;
 
@@ -41,6 +43,7 @@ namespace checkers
                 xLoc = 0;
                 yLoc += 75;
             }
+            InitializePlayerName(firstStart);
         }
 
         private void displayAvailableMoves(PictureBox selectedPiece) // display on board available moves for selected piece
@@ -69,17 +72,32 @@ namespace checkers
             }
         }
 
+        private void InitializePlayerName(string first)
+        {
+            if (first == "Player 1")
+            {
+                PlayerWhiteNameLabel.Text = board.PlayerWhite.name;
+                PlayerBlackNameLabel.Text = board.PlayerBlack.name;
+            }
+            else
+            {
+                PlayerWhiteNameLabel.Text = board.PlayerBlack.name;
+                PlayerBlackNameLabel.Text = board.PlayerWhite.name;
+            }
+
+            UpdateTurnPlayer();
+        }
+
         private void UpdateTurnPlayer()
         {
-            board.changePlayerTurn();
-            if (board.isWhiteTurn == true)
+            if (board.isPlayerWhiteTurn == true)
             {
-                Player1Turn.Visible = true;
+                PlayerWhiteTurn.Visible = true;
                 Player2Turn.Visible = false;
             }
             else
             {
-                Player1Turn.Visible = false;
+                PlayerWhiteTurn.Visible = false;
                 Player2Turn.Visible = true;
             }
         }
@@ -93,12 +111,12 @@ namespace checkers
                 if (piece.Image != null)
                 {
                     RemoveDisplayOldMoves();
-                    if (board.isWhiteTurn == true && piece.Image.Tag == "white")
+                    if (board.isPlayerWhiteTurn == true && piece.Image.Tag == "white")
                     {
                         _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
                         displayAvailableMoves(piece);
                     }
-                    else if (board.isWhiteTurn == false && piece.Image.Tag == "black")
+                    else if (board.isPlayerWhiteTurn == false && piece.Image.Tag == "black")
                     {
                         _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
                         displayAvailableMoves(piece);
@@ -114,6 +132,7 @@ namespace checkers
                 {
                     Point GreenMove = new Point(placeLocation[0], placeLocation[1]);
                     moveSelectedPiece(_selectedPieceLocation, GreenMove);
+                    board.changePlayerTurn();
                     UpdateTurnPlayer();
                 }
             };
@@ -144,9 +163,8 @@ namespace checkers
         {
             mainBoard.Enabled = false;
             isEnd = true;
-            PLayerWinText.Text = name + "is win!";
+            PLayerWinText.Text = name + " is win!";
             PLayerWinText.Visible = true;
-
         }
 
         private void moveSelectedPiece(Point selectedPiece, Point move)
@@ -162,15 +180,15 @@ namespace checkers
                 opponent.Y = (selectedPiece.Y + move.Y) / 2;
                 removePiece(opponent);
 
-                Player1ScoreLabel.Text = board.Player1.score.ToString();
-                Player2ScoreLabel.Text = board.Player2.score.ToString();
-                if(board.Player1.score == 12)
+                PlayerWhiteScoreLabel.Text = board.PlayerWhite.score.ToString();
+                PlayerBlackScoreLabel.Text = board.PlayerBlack.score.ToString();
+                if (board.PlayerWhite.score == 12)
                 {
-                    PlayerWin(board.Player1.name);
+                    PlayerWin(board.PlayerWhite.name);
                 }
-                else if (board.Player2.score == 12)
+                else if (board.PlayerBlack.score == 12)
                 {
-                    PlayerWin(board.Player2.name);
+                    PlayerWin(board.PlayerBlack.name);
                 }
             }
             removePiece(selectedPiece);

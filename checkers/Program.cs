@@ -11,7 +11,13 @@ namespace checkers
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new AppForm());
+            HelloForm FormSetting = new HelloForm();
+            Application.Run(FormSetting);
+            if (FormSetting.isCorrect == true)
+            {
+                AppForm checkersForm = new AppForm(FormSetting.boardSize, FormSetting.firstStart, FormSetting.Player1Name, FormSetting.Player2Name);
+                checkersForm.ShowDialog();
+            }
         }
     }
 }
