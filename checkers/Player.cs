@@ -8,7 +8,7 @@ namespace checkers
 {
     internal class Player
     {
-        string name;
+        public string name;
         int pieceColor;
         public int score;
         int jumps;

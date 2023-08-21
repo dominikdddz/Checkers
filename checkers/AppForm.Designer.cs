@@ -39,6 +39,7 @@
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             Player1Turn = new Label();
+            PLayerWinText = new Label();
             ((System.ComponentModel.ISupportInitialize)mainBoard).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
@@ -157,11 +158,23 @@
             Player1Turn.Text = "YOUR TURN";
             Player1Turn.Visible = false;
             // 
+            // PLayerWinText
+            // 
+            PLayerWinText.AutoSize = true;
+            PLayerWinText.Font = new Font("Segoe UI", 16F, FontStyle.Regular, GraphicsUnit.Point);
+            PLayerWinText.Location = new Point(234, 292);
+            PLayerWinText.Name = "PLayerWinText";
+            PLayerWinText.Size = new Size(149, 30);
+            PLayerWinText.TabIndex = 11;
+            PLayerWinText.Text = "Player1 is win!";
+            PLayerWinText.Visible = false;
+            // 
             // AppForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(806, 625);
+            Controls.Add(PLayerWinText);
             Controls.Add(Player1Turn);
             Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
@@ -196,5 +209,6 @@
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private Label Player1Turn;
+        private Label PLayerWinText;
     }
 }

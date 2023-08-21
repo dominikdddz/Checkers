@@ -41,6 +41,16 @@ namespace checkers
             isWhiteTurn ^= true;
         }
 
+        public bool isPLayerWin(Player player)
+        {
+            if (player.score == 12)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
         public bool movePiece(Point selectedPiece, Point newPosition)
         {
             if(Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // is capture move

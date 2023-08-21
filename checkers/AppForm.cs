@@ -7,6 +7,7 @@ namespace checkers
         private Point[] _moves = new Point[2];
         private Point _selectedPieceLocation;
         bool isStart = false;
+        bool isEnd = false;
         public AppForm()
         {
             InitializeComponent();
@@ -139,6 +140,15 @@ namespace checkers
             _places[piece.X, piece.Y].Image = null;
         }
 
+        private void PlayerWin(string name)
+        {
+            mainBoard.Enabled = false;
+            isEnd = true;
+            PLayerWinText.Text = name + "is win!";
+            PLayerWinText.Visible = true;
+
+        }
+
         private void moveSelectedPiece(Point selectedPiece, Point move)
         {
             bool isCaptured = board.movePiece(selectedPiece, move);
@@ -154,6 +164,14 @@ namespace checkers
 
                 Player1ScoreLabel.Text = board.Player1.score.ToString();
                 Player2ScoreLabel.Text = board.Player2.score.ToString();
+                if(board.Player1.score == 12)
+                {
+                    PlayerWin(board.Player1.name);
+                }
+                else if (board.Player2.score == 12)
+                {
+                    PlayerWin(board.Player2.name);
+                }
             }
             removePiece(selectedPiece);
         }
@@ -177,7 +195,10 @@ namespace checkers
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    MouseClickPlace(_places[x, y]);
+                    if (isEnd == false)
+                        MouseClickPlace(_places[x, y]);
+                    else
+                        break;
                 }
             }
         }
