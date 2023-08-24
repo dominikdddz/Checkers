@@ -1,4 +1,5 @@
 using Microsoft.VisualBasic.Devices;
+using System.Net.NetworkInformation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace checkers
@@ -65,7 +66,7 @@ namespace checkers
                 colorTurn = 1;
             }
             isCaptureMove = false;
-            _allMoves = board.checkAllMoves(colorTurn);
+            _allMoves = board.checkAllMovesForOneColor(colorTurn);
             if (board.isCaptureMove == true)
                 _selectedMoves = board.captureMove;
         }
@@ -80,18 +81,18 @@ namespace checkers
                     if (move.IsEmpty) continue;
                     if (move != moves[0])
                     {
-                        if (isCaptureMove==true)
+                        if (isCaptureMove == true)
                         {
                             if (Math.Pow(move.X - moves[0].X, 2) > 2)
                             {
                                 _places[move.X, move.Y].BackColor = Color.Green;
-                            } 
+                            }
                         }
                         else
                         {
                             _places[move.X, move.Y].BackColor = Color.Green;
                         }
-                    }     
+                    }
                 }
             }
             else
@@ -100,8 +101,8 @@ namespace checkers
                 foreach (var move in moves)
                 {
                     if (move.IsEmpty) continue;
-                    if (move != moves[0])  
-                    _places[move.X, move.Y].BackColor = Color.Gray;
+                    if (move != moves[0])
+                        _places[move.X, move.Y].BackColor = Color.Gray;
                 }
             }
         }
@@ -124,8 +125,8 @@ namespace checkers
 
         private void MouseClickPlace(PictureBox selectedPlace) // function to check which piece was click
         {
-            
-            selectedPlace.MouseClick += (sender2, e2) =>
+
+            selectedPlace.MouseClick += (sender2, e2) => // check first click on board
             {
                 PictureBox piece = sender2 as PictureBox;
                 int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
@@ -152,7 +153,7 @@ namespace checkers
                 }
             };
 
-            selectedPlace.MouseClick += (sender3, e3) =>
+            selectedPlace.MouseClick += (sender3, e3) => // check second click on board
             {
                 PictureBox piece = sender3 as PictureBox;
                 int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
@@ -164,7 +165,7 @@ namespace checkers
                     UpdateTurnPlayer();
                 }
             };
-            
+
         }
 
         private void setPiece(Point piece) // add piece on board
@@ -179,16 +180,26 @@ namespace checkers
                 _places[piece.X, piece.Y].Image = Properties.Resources.white;
                 _places[piece.X, piece.Y].Image.Tag = "white";
             }
+            else if (board.Gameboard[piece.X, piece.Y] == 3)
+            {
+                _places[piece.X, piece.Y].Image = Properties.Resources.black_king;
+                _places[piece.X, piece.Y].Image.Tag = "white";
+            }
+            else if (board.Gameboard[piece.X, piece.Y] == 4)
+            {
+                _places[piece.X, piece.Y].Image = Properties.Resources.white_king;
+                _places[piece.X, piece.Y].Image.Tag = "white";
+            }
             _places[piece.X, piece.Y].SizeMode = PictureBoxSizeMode.CenterImage;
             if (isStart == true)
                 RemoveDisplayOldMoves(_selectedMoves);
         }
-        private void removePiece(Point piece) 
+        private void removePiece(Point piece) // remove piece from board
         {
             _places[piece.X, piece.Y].Image = null;
         }
 
-        private void PlayerWin(string name)
+        private void PlayerWin(string name) // show win message 
         {
             mainBoard.Enabled = false;
             isEnd = true;

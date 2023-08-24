@@ -24,16 +24,16 @@ namespace checkers
 
         public Board(string boardSize, string PlayerWhiteName, string PlayerBlackName)
         {
-            _gameboard = new int[8, 8] {
-                { 0,1,0,1,0,1,0,1 },
-                { 1,0,1,0,1,0,1,0 },
+            _gameboard = new int[8, 8] { 
+                { 0,1,0,0,0,1,0,1 },
+                { 1,0,1,0,4,0,1,0 },
                 { 0,1,0,1,0,1,0,1 },
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },
                 { 2,0,2,0,2,0,2,0 },
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
-            };
+            };  // 2 - white | 1 - black | 4 - white king | 3 - blak king
 
             int white = 2;
             int black = 1;
@@ -41,7 +41,7 @@ namespace checkers
             PlayerBlack = new Player(PlayerBlackName, black);
             isPlayerWhiteTurn = true;
             isCaptureMove = false;
-            checkAllMoves(white);
+            checkAllMovesForOneColor(white);
         }
         public void changePlayerTurn()
         {
@@ -77,19 +77,21 @@ namespace checkers
         {
             if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // is capture move
             {
-                int tmpPiece = _gameboard[selectedPiece.X, selectedPiece.Y];
-                _gameboard[selectedPiece.X, selectedPiece.Y] = 0;
-                _gameboard[newPosition.X, newPosition.Y] = tmpPiece;
+                int tmpPiece = Gameboard[selectedPiece.X, selectedPiece.Y];
+                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
+                Gameboard[newPosition.X, newPosition.Y] = tmpPiece;
 
                 CaptureMove(selectedPiece);
-                _gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2] = 0;
+                Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2] = 0;
+                checkIsPieceChnageToKing(new Point(newPosition.X, newPosition.Y));
                 return true;
             }
             else // normal move
             {
-                int tmpPiece = _gameboard[selectedPiece.X, selectedPiece.Y];
-                _gameboard[selectedPiece.X, selectedPiece.Y] = 0;
-                _gameboard[newPosition.X, newPosition.Y] = tmpPiece;
+                int tmpPiece = Gameboard[selectedPiece.X, selectedPiece.Y];
+                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
+                Gameboard[newPosition.X, newPosition.Y] = tmpPiece;
+                checkIsPieceChnageToKing(new Point(newPosition.X, newPosition.Y));
                 if (isPlayerWhiteTurn == true)
                 {
                     PlayerWhite.Jumps++;
@@ -99,6 +101,19 @@ namespace checkers
                     PlayerBlack.Jumps++;
                 }
                 return false;
+            }
+        }
+
+        private void checkIsPieceChnageToKing(Point actualPosition) // check is piece change to king
+        {
+            int color = Gameboard[actualPosition.X, actualPosition.Y];
+            if(color == 2 && actualPosition.X == 0)
+            {
+                Gameboard[actualPosition.X, actualPosition.Y] = 4;
+            }
+            else if(color == 1 && actualPosition.X == size - 1)
+            {
+                Gameboard[actualPosition.X, actualPosition.Y] = 3;
             }
         }
 
@@ -116,14 +131,25 @@ namespace checkers
             }
         }
 
-        public List<Point[]> checkAllMoves(int color)
+        public List<Point[]> checkAllMovesForOneColor(int color)
         {
+            int[] colors = new int[2];
+            if (color == 2)
+            {
+                colors[0] = 2;
+                colors[1] = 4;
+            }
+            else
+            {
+                colors[0] = 1;
+                colors[1] = 3;
+            }
             List<Point[]> list = new List<Point[]>();
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    if (Gameboard[x, y] == color)
+                    if (colors.Contains(Gameboard[x, y]))
                     {
                         Point[] moves = checkAvailableMoves(new Point(x, y));
                         if (moves[0].X + moves[0].Y > 0)
@@ -186,30 +212,16 @@ namespace checkers
 
         public Point[] checkAvailableMoves(Point SelectedPlace)
         {
-            int color = Gameboard[SelectedPlace.X, SelectedPlace.Y]; // get piece color id;
-            int opponent;
-            if(color == 2)
-            {
-                opponent = 1;
-            }
-            else
-            {
-                opponent = 2;
-            }
+            int color = Gameboard[SelectedPlace.X, SelectedPlace.Y];        // get piece color id;
+
+            int opponent = (color%2==0) ? 1 : 2;        // if color % 2 == 0 then opponent = 2 else opponent = 1
+
             bool king = isKing(SelectedPlace);
-            Point[] moves;
-            if (king == true) // king has 4 available moves | normnal pice only 2 moves at once
-            {
-                moves = new Point[4];
-            }
-            else
-            {
-                moves = new Point[2];
-            }
+            Point[] moves = (king == true) ? new Point[4] : new Point[2]; // if king == 4 then moves = 4 else moves = 2
 
             if (color == 2 || king == true)     // check move place for white piece or king piece
             {
-                if (checkIsMoveOutOfBounds(SelectedPlace.X, SelectedPlace.Y - 1) == false)      // check is left-up place is out of bounds board
+                if (checkIsMoveOutOfBounds(SelectedPlace.X-1, SelectedPlace.Y - 1) == false)      // check is left-up place is out of bounds board
                 {
                     if (Gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1] == 0)       // check left-up place is free
                         moves = addMove(moves, new Point(SelectedPlace.X - 1, SelectedPlace.Y - 1));
@@ -264,97 +276,7 @@ namespace checkers
                         }
                     }
                 }
-            }
-            /*
-            else if (SelectedPlace.X > 0 && SelectedPlace.Y == 0)  // check 1 move on left corner
-            {
-                if (_gameboard[SelectedPlace.X, SelectedPlace.Y] == 2) // check place for white piece
-                {
-                    if (SelectedPlace.X - 1 >= 0 && SelectedPlace.Y + 1 <= 7)
-                    {
-                        if (_gameboard[SelectedPlace.X - 1, SelectedPlace.Y + 1] == 0) // check right place is free
-                        {
-                            moves[0].X = SelectedPlace.X - 1;
-                            moves[0].Y = SelectedPlace.Y + 1;
-                        }
-                        else if (_gameboard[SelectedPlace.X - 1, SelectedPlace.Y + 1] == 1) // check is right place is opponent
-                        {
-                            if (_gameboard[SelectedPlace.X - 2, SelectedPlace.Y + 2] == 0)
-                            {
-                                moves[0].X = SelectedPlace.X - 2;
-                                moves[0].Y = SelectedPlace.Y + 2;
-                            }
-                        }
-                    }
-                }
-                else // check place for black piece
-                {
-                    if (SelectedPlace.X + 1 <= 7 && SelectedPlace.Y + 1 <= 7)
-                    {
-                        if (_gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == 0) // check right place is free
-                        {
-                            moves[0].X = SelectedPlace.X + 1;
-                            moves[0].Y = SelectedPlace.Y + 1;
-                        }
-                        else if (_gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == 2) // check is right place is opponent
-                        {
-                            if (_gameboard[SelectedPlace.X + 2, SelectedPlace.Y + 2] == 0)
-                            {
-                                moves[0].X = SelectedPlace.X + 2;
-                                moves[0].Y = SelectedPlace.Y + 2;
-                            }
-                        }
-                    }
-                }
-            }
-
-            else if (SelectedPlace.X >= 0 && SelectedPlace.Y == 7) // check 1 move on right corner
-            {
-                if (_gameboard[SelectedPlace.X, SelectedPlace.Y] == 2) // check place for white piece
-                {
-                    if (SelectedPlace.X - 1 >= 0 && SelectedPlace.Y - 1 >= 0)
-                    {
-                        if (_gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1] == 0) // check left place is free
-                        {
-                            moves[0].X = SelectedPlace.X - 1;
-                            moves[0].Y = SelectedPlace.Y - 1;
-                        }
-                        else if (_gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1] == 1) // check is left place is opponent
-                        {
-                            if (_gameboard[SelectedPlace.X - 2, SelectedPlace.Y - 2] == 0)
-                            {
-                                moves[0].X = SelectedPlace.X - 2;
-                                moves[0].Y = SelectedPlace.Y - 2;
-                            }
-                        }
-                    }
-
-                }
-                else // check place for black piece
-                {
-                    if (SelectedPlace.X + 1 <= 7 && SelectedPlace.Y - 1 >= 0)
-                    {
-                        if (_gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1] == 0) // check left place is free
-                        {
-                            moves[0].X = SelectedPlace.X + 1;
-                            moves[0].Y = SelectedPlace.Y - 1;
-                        }
-                        else if (_gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1] == 2) // check is left place is opponent
-                        {
-                            if (SelectedPlace.X + 2 <= 7 && SelectedPlace.Y - 2 >= 0)
-                            {
-                                if (_gameboard[SelectedPlace.X + 2, SelectedPlace.Y - 2] == 0)
-                                {
-                                    moves[0].X = SelectedPlace.X + 2;
-                                    moves[0].Y = SelectedPlace.Y - 2;
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-            */
+            } 
             return moves;
         }
 
