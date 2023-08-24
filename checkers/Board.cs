@@ -25,8 +25,8 @@ namespace checkers
         public Board(string boardSize, string PlayerWhiteName, string PlayerBlackName)
         {
             _gameboard = new int[8, 8] { 
-                { 0,1,0,0,0,1,0,1 },
-                { 1,0,1,0,4,0,1,0 },
+                { 0,1,0,1,0,1,0,1 },
+                { 1,0,1,0,1,0,1,0 },
                 { 0,1,0,1,0,1,0,1 },
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },
@@ -267,7 +267,7 @@ namespace checkers
                 {
                     if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == 0)       // check right-down place is free
                         moves = addMove(moves, new Point(SelectedPlace.X + 1, SelectedPlace.Y + 1));
-                    else if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == 2)      // check is right-down place is opponent
+                    else if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == opponent)      // check is right-down place is opponent
                     {
                         if (checkIsMoveOutOfBounds(SelectedPlace.X + 2, SelectedPlace.Y + 2) == false)      // check is right-down jump is out of bounds board
                         {
