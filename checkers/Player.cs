@@ -10,22 +10,25 @@ namespace checkers
     {
         public string name;
         int pieceColor;
-        public int score;
-        int jumps;
-        public Player(string name, int pieceColor, int score, int jumps)
+        private int _score;
+        public int Score
+        {
+            get => _score;
+            set => _score = value;
+        }
+        int _jumps;
+        public int Jumps
+        {
+            get => _jumps;
+            set => _jumps = value;
+        }
+
+        public Player(string name, int pieceColor)
         {
             this.name = name;
             this.pieceColor = pieceColor;
-            this.score = score;
-            this.jumps = jumps;
-        }
-        public void increaseScore()
-        {
-            score++;
-        }
-        public void increaseJumps()
-        {
-            jumps++;
+            _score = 0;
+            _jumps = 0;
         }
     }
 }

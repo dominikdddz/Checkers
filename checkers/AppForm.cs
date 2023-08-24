@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.Devices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace checkers
@@ -6,10 +7,12 @@ namespace checkers
     {
         Board board;
         private PictureBox[,] _places = new PictureBox[8, 8];
-        private Point[] _moves = new Point[2];
         private Point _selectedPieceLocation;
+        private List<Point[]> _allMoves;
+        Point[] _selectedMoves = new Point[10];
         bool isStart = false;
         bool isEnd = false;
+        bool isCaptureMove = false;
         public AppForm(String boardSize, String firstStart, String Player1Name, String Player2Name)
         {
             InitializeComponent();
@@ -46,33 +49,64 @@ namespace checkers
             InitializePlayerName(firstStart);
         }
 
-        private void displayAvailableMoves(PictureBox selectedPiece) // display on board available moves for selected piece
+        private void UpdateTurnPlayer() // function to change a player turn
         {
-            _moves = board.checkPieceMoves(_selectedPieceLocation);
-
-            if (selectedPiece.BackColor == Color.Gray)
+            int colorTurn;
+            if (board.isPlayerWhiteTurn == true)
             {
-                selectedPiece.BackColor = Color.DarkOrange;
+                PlayerWhiteTurn.Visible = true;
+                Player2Turn.Visible = false;
+                colorTurn = 2;
+            }
+            else
+            {
+                PlayerWhiteTurn.Visible = false;
+                Player2Turn.Visible = true;
+                colorTurn = 1;
+            }
+            isCaptureMove = false;
+            _allMoves = board.checkAllMoves(colorTurn);
+            if (board.isCaptureMove == true)
+                _selectedMoves = board.captureMove;
+        }
 
-                foreach (var move in _moves)
+        private void displayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
+        {
+            if (_places[moves[0].X, moves[0].Y].BackColor == Color.Gray)
+            {
+                _places[moves[0].X, moves[0].Y].BackColor = Color.DarkBlue;
+                foreach (var move in moves)
                 {
                     if (move.IsEmpty) continue;
-                    _places[move.X, move.Y].BackColor = Color.Green;
+                    if (move != moves[0])
+                    {
+                        if (isCaptureMove==true)
+                        {
+                            if (Math.Pow(move.X - moves[0].X, 2) > 2)
+                            {
+                                _places[move.X, move.Y].BackColor = Color.Green;
+                            } 
+                        }
+                        else
+                        {
+                            _places[move.X, move.Y].BackColor = Color.Green;
+                        }
+                    }     
                 }
             }
             else
             {
-                selectedPiece.BackColor = Color.Gray;
-
-                foreach (var move in _moves)
+                _places[moves[0].X, moves[0].Y].BackColor = Color.Gray;
+                foreach (var move in moves)
                 {
                     if (move.IsEmpty) continue;
+                    if (move != moves[0])  
                     _places[move.X, move.Y].BackColor = Color.Gray;
                 }
             }
         }
 
-        private void InitializePlayerName(string first)
+        private void InitializePlayerName(string first) // function to change player name from a previous form
         {
             if (first == "Player 1")
             {
@@ -84,43 +118,37 @@ namespace checkers
                 PlayerWhiteNameLabel.Text = board.PlayerBlack.name;
                 PlayerBlackNameLabel.Text = board.PlayerWhite.name;
             }
-
             UpdateTurnPlayer();
         }
 
-        private void UpdateTurnPlayer()
-        {
-            if (board.isPlayerWhiteTurn == true)
-            {
-                PlayerWhiteTurn.Visible = true;
-                Player2Turn.Visible = false;
-            }
-            else
-            {
-                PlayerWhiteTurn.Visible = false;
-                Player2Turn.Visible = true;
-            }
-        }
 
-        private void MouseClickPlace(PictureBox selectedPlace)
+        private void MouseClickPlace(PictureBox selectedPlace) // function to check which piece was click
         {
+            
             selectedPlace.MouseClick += (sender2, e2) =>
             {
                 PictureBox piece = sender2 as PictureBox;
                 int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                 if (piece.Image != null)
                 {
-                    RemoveDisplayOldMoves();
-                    if (board.isPlayerWhiteTurn == true && piece.Image.Tag == "white")
+                    if (isCaptureMove == false)
                     {
+                        RemoveDisplayOldMoves(_selectedMoves);
                         _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                        displayAvailableMoves(piece);
+                        foreach (var moves in _allMoves)
+                        {
+                            if (moves[0] == _selectedPieceLocation)
+                            {
+                                _selectedMoves = moves;
+                                displayAvailableMovesForSelectedPiece(piece, moves);
+                            }
+                        }
                     }
-                    else if (board.isPlayerWhiteTurn == false && piece.Image.Tag == "black")
+                    else
                     {
-                        _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                        displayAvailableMoves(piece);
+                        displayAvailableMovesForSelectedPiece(piece, _selectedMoves);
                     }
+
                 }
             };
 
@@ -136,6 +164,7 @@ namespace checkers
                     UpdateTurnPlayer();
                 }
             };
+            
         }
 
         private void setPiece(Point piece) // add piece on board
@@ -152,9 +181,9 @@ namespace checkers
             }
             _places[piece.X, piece.Y].SizeMode = PictureBoxSizeMode.CenterImage;
             if (isStart == true)
-                RemoveDisplayOldMoves();
+                RemoveDisplayOldMoves(_selectedMoves);
         }
-        private void removePiece(Point piece)
+        private void removePiece(Point piece) 
         {
             _places[piece.X, piece.Y].Image = null;
         }
@@ -167,7 +196,7 @@ namespace checkers
             PLayerWinText.Visible = true;
         }
 
-        private void moveSelectedPiece(Point selectedPiece, Point move)
+        private void moveSelectedPiece(Point selectedPiece, Point move) // move selected piece on selected move place
         {
             bool isCaptured = board.movePiece(selectedPiece, move);
             _places[move.X, move.Y].BackColor = Color.Gray;
@@ -180,13 +209,13 @@ namespace checkers
                 opponent.Y = (selectedPiece.Y + move.Y) / 2;
                 removePiece(opponent);
 
-                PlayerWhiteScoreLabel.Text = board.PlayerWhite.score.ToString();
-                PlayerBlackScoreLabel.Text = board.PlayerBlack.score.ToString();
-                if (board.PlayerWhite.score == 12)
+                PlayerWhiteScoreLabel.Text = board.PlayerWhite.Score.ToString();
+                PlayerBlackScoreLabel.Text = board.PlayerBlack.Score.ToString();
+                if (board.PlayerWhite.Score == 12)
                 {
                     PlayerWin(board.PlayerWhite.name);
                 }
-                else if (board.PlayerBlack.score == 12)
+                else if (board.PlayerBlack.Score == 12)
                 {
                     PlayerWin(board.PlayerBlack.name);
                 }
@@ -194,20 +223,16 @@ namespace checkers
             removePiece(selectedPiece);
         }
 
-        private void RemoveDisplayOldMoves()
+        private void RemoveDisplayOldMoves(Point[] moves) // remove moves from board
         {
-            for (int i = 0; i < _moves.Length; i++)
+            foreach (Point move in moves)
             {
-                if (_moves[i].IsEmpty) continue;
-                _places[_moves[i].X, _moves[i].Y].BackColor = Color.Gray;
-                _moves[0].X = 0;
-                _moves[0].Y = 0;
+                if (move.IsEmpty) continue;
+                _places[move.X, move.Y].BackColor = Color.Gray;
             }
-            if (_selectedPieceLocation.X + _selectedPieceLocation.Y > 0)
-                _places[_selectedPieceLocation.X, _selectedPieceLocation.Y].BackColor = Color.Gray;
         }
 
-        private void UpdateGameBoard(object sender, EventArgs e)
+        private void UpdateGameBoard(object sender, EventArgs e) // scanning board to check if was click on place
         {
             for (int x = 0; x < 8; x++)
             {
