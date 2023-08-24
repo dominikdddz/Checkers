@@ -161,13 +161,13 @@
             // PLayerWinText
             // 
             PLayerWinText.BackColor = Color.Transparent;
-            PLayerWinText.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            PLayerWinText.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point);
             PLayerWinText.ForeColor = Color.Black;
-            PLayerWinText.Location = new Point(190, 273);
+            PLayerWinText.Location = new Point(12, 264);
             PLayerWinText.Name = "PLayerWinText";
-            PLayerWinText.Size = new Size(422, 36);
+            PLayerWinText.Size = new Size(600, 61);
             PLayerWinText.TabIndex = 11;
-            PLayerWinText.Text = "Player is win";
+            PLayerWinText.Text = "Player is win!";
             PLayerWinText.TextAlign = ContentAlignment.MiddleCenter;
             PLayerWinText.Visible = false;
             // 
