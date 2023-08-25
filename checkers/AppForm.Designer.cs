@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppForm));
             mainBoard = new PictureBox();
             PlayerWhiteScoreLabel = new Label();
             PlayerBlackScoreLabel = new Label();
@@ -189,6 +190,7 @@
             Controls.Add(PlayerBlackScoreLabel);
             Controls.Add(PlayerWhiteScoreLabel);
             Controls.Add(mainBoard);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "AppForm";
             Text = "Checkers";
             Load += UpdateGameBoard;

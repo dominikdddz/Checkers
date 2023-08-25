@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelloForm));
             groupBox1 = new GroupBox();
             comboBoxFirstMove = new ComboBox();
             label4 = new Label();
@@ -175,6 +176,7 @@
             Controls.Add(button1);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "HelloForm";
             Text = "Checkers";
             groupBox1.ResumeLayout(false);
