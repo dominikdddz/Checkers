@@ -41,19 +41,21 @@
             label1 = new Label();
             labelError = new Label();
             button1 = new Button();
+            checkBoxShowMoves = new CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBoxShowMoves);
             groupBox1.Controls.Add(comboBoxFirstMove);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(comboBoxBoardSize);
             groupBox1.Controls.Add(label3);
             groupBox1.Location = new Point(8, 8);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(208, 146);
+            groupBox1.Size = new Size(208, 187);
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Game Settings";
@@ -63,7 +65,7 @@
             comboBoxFirstMove.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxFirstMove.FormattingEnabled = true;
             comboBoxFirstMove.Items.AddRange(new object[] { "Player 1", "Player 2" });
-            comboBoxFirstMove.Location = new Point(6, 111);
+            comboBoxFirstMove.Location = new Point(7, 107);
             comboBoxFirstMove.Name = "comboBoxFirstMove";
             comboBoxFirstMove.Size = new Size(121, 23);
             comboBoxFirstMove.TabIndex = 3;
@@ -71,7 +73,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(6, 93);
+            label4.Location = new Point(7, 89);
             label4.Name = "label4";
             label4.Size = new Size(65, 15);
             label4.TabIndex = 2;
@@ -82,7 +84,7 @@
             comboBoxBoardSize.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxBoardSize.FormattingEnabled = true;
             comboBoxBoardSize.Items.AddRange(new object[] { "8x8" });
-            comboBoxBoardSize.Location = new Point(6, 53);
+            comboBoxBoardSize.Location = new Point(7, 49);
             comboBoxBoardSize.MaxDropDownItems = 3;
             comboBoxBoardSize.Name = "comboBoxBoardSize";
             comboBoxBoardSize.Size = new Size(121, 23);
@@ -91,7 +93,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(6, 35);
+            label3.Location = new Point(7, 31);
             label3.Name = "label3";
             label3.Size = new Size(64, 15);
             label3.TabIndex = 0;
@@ -103,7 +105,7 @@
             groupBox2.Controls.Add(textBoxPlayer1);
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(label1);
-            groupBox2.Location = new Point(222, 12);
+            groupBox2.Location = new Point(222, 8);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(208, 142);
             groupBox2.TabIndex = 3;
@@ -148,9 +150,9 @@
             // labelError
             // 
             labelError.ForeColor = Color.Red;
-            labelError.Location = new Point(8, 157);
+            labelError.Location = new Point(0, 198);
             labelError.Name = "labelError";
-            labelError.Size = new Size(422, 36);
+            labelError.Size = new Size(438, 36);
             labelError.TabIndex = 5;
             labelError.Text = "Nazwa jest zbyt długa";
             labelError.TextAlign = ContentAlignment.MiddleCenter;
@@ -158,7 +160,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(184, 196);
+            button1.Location = new Point(176, 237);
             button1.Name = "button1";
             button1.Size = new Size(74, 31);
             button1.TabIndex = 4;
@@ -166,12 +168,24 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // checkBoxShowMoves
+            // 
+            checkBoxShowMoves.AutoSize = true;
+            checkBoxShowMoves.Checked = true;
+            checkBoxShowMoves.CheckState = CheckState.Checked;
+            checkBoxShowMoves.Location = new Point(7, 146);
+            checkBoxShowMoves.Name = "checkBoxShowMoves";
+            checkBoxShowMoves.Size = new Size(93, 19);
+            checkBoxShowMoves.TabIndex = 4;
+            checkBoxShowMoves.Text = "Show moves";
+            checkBoxShowMoves.UseVisualStyleBackColor = true;
+            // 
             // HelloForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Menu;
-            ClientSize = new Size(438, 239);
+            ClientSize = new Size(438, 280);
             Controls.Add(labelError);
             Controls.Add(button1);
             Controls.Add(groupBox2);
@@ -199,5 +213,6 @@
         private TextBox textBoxPlayer2;
         private TextBox textBoxPlayer1;
         private Label labelError;
+        private CheckBox checkBoxShowMoves;
     }
 }

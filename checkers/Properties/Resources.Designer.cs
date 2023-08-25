@@ -63,9 +63,9 @@ namespace checkers.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap black {
+        internal static System.Drawing.Bitmap blackPiece {
             get {
-                object obj = ResourceManager.GetObject("black", resourceCulture);
+                object obj = ResourceManager.GetObject("blackPiece", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace checkers.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap black_king {
+        internal static System.Drawing.Bitmap blackPieceKing {
             get {
-                object obj = ResourceManager.GetObject("black_king", resourceCulture);
+                object obj = ResourceManager.GetObject("blackPieceKing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace checkers.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap white {
+        internal static System.Drawing.Bitmap whitePiece {
             get {
-                object obj = ResourceManager.GetObject("white", resourceCulture);
+                object obj = ResourceManager.GetObject("whitePiece", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace checkers.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap white_king {
+        internal static System.Drawing.Bitmap whitePieceKing {
             get {
-                object obj = ResourceManager.GetObject("white_king", resourceCulture);
+                object obj = ResourceManager.GetObject("whitePieceKing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

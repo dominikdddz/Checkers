@@ -17,6 +17,8 @@ namespace checkers
         public string firstStart { get; set; }
         public string Player1Name { get; set; }
         public string Player2Name { get; set; }
+        public bool showMoves { get; set; }
+
 
         public HelloForm()
         {
@@ -33,6 +35,7 @@ namespace checkers
                 firstStart = comboBoxFirstMove.Text;
                 Player1Name = textBoxPlayer1.Text;
                 Player2Name = textBoxPlayer2.Text;
+                showMoves = checkBoxShowMoves.Checked;
                 this.Close();
             }
         }
@@ -59,7 +62,7 @@ namespace checkers
                 labelError.Visible = true;
                 return false;
             }
-            else if (Player.Text.Length > 15)
+            else if (Player.Text.Length > 10)
             {
                 labelError.Text = "Player  " + Number + " name is too long!\n(max 15 words)";
                 labelError.Visible = true;

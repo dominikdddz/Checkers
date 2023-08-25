@@ -15,7 +15,7 @@ namespace checkers
             Application.Run(FormSetting);
             if (FormSetting.isCorrect == true)
             {
-                AppForm checkersForm = new AppForm(FormSetting.boardSize, FormSetting.firstStart, FormSetting.Player1Name, FormSetting.Player2Name);
+                AppForm checkersForm = new AppForm(FormSetting.boardSize, FormSetting.firstStart, FormSetting.Player1Name, FormSetting.Player2Name, FormSetting.showMoves);
                 checkersForm.ShowDialog();
             }
         }

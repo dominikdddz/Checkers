@@ -14,10 +14,12 @@ namespace checkers
         bool isStart = false;
         bool isEnd = false;
         bool isCaptureMove = false;
-        public AppForm(String boardSize, String firstStart, String Player1Name, String Player2Name)
+        bool showMoves;
+        public AppForm(String boardSize, String firstStart, String Player1Name, String Player2Name, bool showMoves)
         {
             InitializeComponent();
             InitializeGameBoard(boardSize, firstStart, Player1Name, Player2Name);
+            this.showMoves = showMoves;
             isStart = true;
         }
 
@@ -172,22 +174,22 @@ namespace checkers
         {
             if (board.Gameboard[piece.X, piece.Y] == 1)
             {
-                _places[piece.X, piece.Y].Image = Properties.Resources.black;
+                _places[piece.X, piece.Y].Image = Properties.Resources.blackPiece;
                 _places[piece.X, piece.Y].Image.Tag = "black";
             }
             else if (board.Gameboard[piece.X, piece.Y] == 2)
             {
-                _places[piece.X, piece.Y].Image = Properties.Resources.white;
+                _places[piece.X, piece.Y].Image = Properties.Resources.whitePiece;
                 _places[piece.X, piece.Y].Image.Tag = "white";
             }
             else if (board.Gameboard[piece.X, piece.Y] == 3)
             {
-                _places[piece.X, piece.Y].Image = Properties.Resources.black_king;
+                _places[piece.X, piece.Y].Image = Properties.Resources.blackPieceKing;
                 _places[piece.X, piece.Y].Image.Tag = "white";
             }
             else if (board.Gameboard[piece.X, piece.Y] == 4)
             {
-                _places[piece.X, piece.Y].Image = Properties.Resources.white_king;
+                _places[piece.X, piece.Y].Image = Properties.Resources.whitePieceKing;
                 _places[piece.X, piece.Y].Image.Tag = "white";
             }
             _places[piece.X, piece.Y].SizeMode = PictureBoxSizeMode.CenterImage;

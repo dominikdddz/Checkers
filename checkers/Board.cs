@@ -86,12 +86,14 @@ namespace checkers
                     }
                 }
             }
+            /*
             foreach (var moves in list)
             {
                 isCaptureMove = checkIsCaptureMove(moves);
                 if (isCaptureMove == true)
                     break;
             }
+            */
             return list;
         }
 
