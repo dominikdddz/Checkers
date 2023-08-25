@@ -66,7 +66,7 @@ namespace checkers
                 colorTurn = 1;
             }
             isCaptureMove = false;
-            _allMoves = board.checkAllMovesForOneColor(colorTurn);
+            _allMoves = board.checkAllMovesForPlayer(colorTurn);
             if (board.isCaptureMove == true)
                 _selectedMoves = board.captureMove;
         }

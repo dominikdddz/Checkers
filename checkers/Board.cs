@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -28,8 +29,8 @@ namespace checkers
                 { 0,1,0,1,0,1,0,1 },
                 { 1,0,1,0,1,0,1,0 },
                 { 0,1,0,1,0,1,0,1 },
-                { 0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0 },
+                { 0,0,0,0,3,0,0,0 },
+                { 0,0,0,0,0,4,0,0 },
                 { 2,0,2,0,2,0,2,0 },
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
@@ -41,7 +42,7 @@ namespace checkers
             PlayerBlack = new Player(PlayerBlackName, black);
             isPlayerWhiteTurn = true;
             isCaptureMove = false;
-            checkAllMovesForOneColor(white);
+            checkAllMovesForPlayer(white);
         }
         public void changePlayerTurn()
         {
@@ -59,18 +60,39 @@ namespace checkers
                 return false;
         }
 
-        private bool checkIsCaptureMove(Point[] moves) // check is available capture move for player
+        public List<Point[]> checkAllMovesForPlayer(int color)
         {
-            foreach (var move in moves)
+            int[] colors = getPlayerColors(color);
+            List<Point[]> list = new List<Point[]>();
+            for (int x = 0; x < 8; x++)
             {
-                if (move.IsEmpty) continue;
-                if (Math.Pow(move.X - moves[0].X, 2) > 2)
+                for (int y = 0; y < 8; y++)
                 {
-                    captureMove = moves;
-                    return true;
+                    if (colors.Contains(Gameboard[x, y]))
+                    {
+                        Point[] moves = checkAvailableMoves(new Point(x, y));
+                        if (moves[0].X + moves[0].Y > 0)
+                        {
+                            Point[] piece = new Point[moves.Length + 1];
+                            piece[0] = new Point(x, y);
+                            int i = 1;
+                            foreach (Point p in moves)
+                            {
+                                piece[i] = p;
+                                i++;
+                            }
+                            list.Add(piece);
+                        }
+                    }
                 }
             }
-            return false;
+            foreach (var moves in list)
+            {
+                isCaptureMove = checkIsCaptureMove(moves);
+                if (isCaptureMove == true)
+                    break;
+            }
+            return list;
         }
 
         public bool movePiece(Point selectedPiece, Point newPosition)
@@ -103,6 +125,19 @@ namespace checkers
                 return false;
             }
         }
+        private bool checkIsCaptureMove(Point[] moves) // check is available capture move for player
+        {
+            foreach (var move in moves)
+            {
+                if (move.IsEmpty) continue;
+                if (Math.Pow(move.X - moves[0].X, 2) > 2)
+                {
+                    captureMove = moves;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private void checkIsPieceChnageToKing(Point actualPosition) // check is piece change to king
         {
@@ -131,50 +166,6 @@ namespace checkers
             }
         }
 
-        public List<Point[]> checkAllMovesForOneColor(int color)
-        {
-            int[] colors = new int[2];
-            if (color == 2)
-            {
-                colors[0] = 2;
-                colors[1] = 4;
-            }
-            else
-            {
-                colors[0] = 1;
-                colors[1] = 3;
-            }
-            List<Point[]> list = new List<Point[]>();
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    if (colors.Contains(Gameboard[x, y]))
-                    {
-                        Point[] moves = checkAvailableMoves(new Point(x, y));
-                        if (moves[0].X + moves[0].Y > 0)
-                        {
-                            Point[] piece = new Point[moves.Length + 1];
-                            piece[0] = new Point(x, y);
-                            int i = 1;
-                            foreach (Point p in moves)
-                            {
-                                piece[i] = p;
-                                i++;
-                            }
-                            list.Add(piece);
-                        }
-                    }
-                }
-            }
-            foreach (var moves in list)
-            {
-                isCaptureMove = checkIsCaptureMove(moves);
-                if (isCaptureMove == true)
-                    break;
-            }
-            return list;
-        }
         private bool checkIsMoveOutOfBounds(int X, int Y)
         {
             bool result = false;
@@ -209,14 +200,46 @@ namespace checkers
             }
             return moves;
         }
-
-        public Point[] checkAvailableMoves(Point SelectedPlace)
+        private int[] getOpponentColors(int color)      // get opponent color id
         {
+            int[] colors = new int[2];
+            if (color == 2 || color == 4)
+            {
+                colors[0] = 1;
+                colors[1] = 3;
+            }
+            else
+            {
+                colors[0] = 2;
+                colors[1] = 4;
+            }
+            return colors;
+        }
+
+        private int[] getPlayerColors(int color)      // get player color id
+        {
+            int[] colors = new int[2];
+            if (color == 2 || color == 4)
+            {
+                colors[0] = 2;
+                colors[1] = 4;
+            }
+            else
+            {
+                colors[0] = 1;
+                colors[1] = 3;
+            }
+            return colors;
+        }
+
+        private Point[] checkAvailableMoves(Point SelectedPlace)
+        {
+            bool king = isKing(SelectedPlace);
             int color = Gameboard[SelectedPlace.X, SelectedPlace.Y];        // get piece color id;
 
-            int opponent = (color%2==0) ? 1 : 2;        // if color % 2 == 0 then opponent = 2 else opponent = 1
+            int[] opponent = getOpponentColors(color);
 
-            bool king = isKing(SelectedPlace);
+            
             Point[] moves = (king == true) ? new Point[4] : new Point[2]; // if king == 4 then moves = 4 else moves = 2
 
             if (color == 2 || king == true)     // check move place for white piece or king piece
@@ -225,7 +248,7 @@ namespace checkers
                 {
                     if (Gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1] == 0)       // check left-up place is free
                         moves = addMove(moves, new Point(SelectedPlace.X - 1, SelectedPlace.Y - 1));
-                    else if (Gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1] == opponent)       // check is left-up place is opponent
+                    else if (opponent.Contains(Gameboard[SelectedPlace.X - 1, SelectedPlace.Y - 1]))       // check is left-up place is opponent
                     {
                         if (checkIsMoveOutOfBounds(SelectedPlace.X - 2, SelectedPlace.Y - 2) == false)      // check is left-up jump is out of bounds board
                         {
@@ -238,7 +261,7 @@ namespace checkers
                 {
                     if (Gameboard[SelectedPlace.X - 1, SelectedPlace.Y + 1] == 0)       // check is right-up place is free
                         moves = addMove(moves, new Point(SelectedPlace.X - 1, SelectedPlace.Y + 1));
-                    else if (Gameboard[SelectedPlace.X - 1, SelectedPlace.Y + 1] == opponent)       // check is right-up place is opponent
+                    else if (opponent.Contains(Gameboard[SelectedPlace.X - 1, SelectedPlace.Y + 1]))       // check is right-up place is opponent
                     {
                         if (checkIsMoveOutOfBounds(SelectedPlace.X - 2, SelectedPlace.Y + 2) == false)      // check is right-up jump is out of bounds board
                         {
@@ -254,7 +277,7 @@ namespace checkers
                 {
                     if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1] == 0)       // check left-down place is free
                         moves = addMove(moves, new Point(SelectedPlace.X + 1, SelectedPlace.Y - 1));
-                    else if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1] == opponent)       // check is left-down place is opponent
+                    else if (opponent.Contains(Gameboard[SelectedPlace.X + 1, SelectedPlace.Y - 1]))       // check is left-down place is opponent
                     {
                         if (checkIsMoveOutOfBounds(SelectedPlace.X + 2, SelectedPlace.Y - 2) == false)      // check is left-down jump is out of bounds board
                         {
@@ -267,7 +290,7 @@ namespace checkers
                 {
                     if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == 0)       // check right-down place is free
                         moves = addMove(moves, new Point(SelectedPlace.X + 1, SelectedPlace.Y + 1));
-                    else if (Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1] == opponent)      // check is right-down place is opponent
+                    else if (opponent.Contains(Gameboard[SelectedPlace.X + 1, SelectedPlace.Y + 1]))      // check is right-down place is opponent
                     {
                         if (checkIsMoveOutOfBounds(SelectedPlace.X + 2, SelectedPlace.Y + 2) == false)      // check is right-down jump is out of bounds board
                         {
