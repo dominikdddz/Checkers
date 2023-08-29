@@ -5,6 +5,8 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "checkers", "checkers\checkers.csproj", "{9401CB7F-E4DD-4966-A51A-81D83BC9208F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "checkersUnitTest", "checkersUnitTest\checkersUnitTest.csproj", "{4F4830DB-1667-4A27-A232-4524394B16F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9401CB7F-E4DD-4966-A51A-81D83BC9208F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9401CB7F-E4DD-4966-A51A-81D83BC9208F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9401CB7F-E4DD-4966-A51A-81D83BC9208F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F4830DB-1667-4A27-A232-4524394B16F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4830DB-1667-4A27-A232-4524394B16F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4830DB-1667-4A27-A232-4524394B16F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4830DB-1667-4A27-A232-4524394B16F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
