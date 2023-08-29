@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace checkers
 {
-    internal class Player
+    public class Player
     {
         public string name;
         int pieceColor;

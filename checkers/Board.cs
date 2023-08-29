@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace checkers
 {
-    internal class Board
+    public class Board
     {
         private int[,] _gameboard;
         public int[,] Gameboard
@@ -25,7 +25,7 @@ namespace checkers
 
         public Board(string boardSize, string PlayerWhiteName, string PlayerBlackName)
         {
-            _gameboard = new int[8, 8] { 
+            Gameboard = new int[8, 8] { 
                 { 0,1,0,1,0,1,0,1 },
                 { 1,0,1,0,1,0,1,0 },
                 { 0,1,0,1,0,1,0,1 },
@@ -42,7 +42,16 @@ namespace checkers
             PlayerBlack = new Player(PlayerBlackName, black);
             isPlayerWhiteTurn = true;
             isCaptureMove = false;
-            checkAllMovesForPlayer(white);
+        }
+        public Board(int[,] gameboard)
+        {
+            Gameboard = gameboard;
+            int white = 2;
+            int black = 1;
+            PlayerWhite = new Player("Player 1", white);
+            PlayerBlack = new Player("Player 2", black);
+            isPlayerWhiteTurn = true;
+            isCaptureMove = false;
         }
         public void changePlayerTurn()
         {
@@ -86,14 +95,6 @@ namespace checkers
                     }
                 }
             }
-            /*
-            foreach (var moves in list)
-            {
-                isCaptureMove = checkIsCaptureMove(moves);
-                if (isCaptureMove == true)
-                    break;
-            }
-            */
             return list;
         }
 
