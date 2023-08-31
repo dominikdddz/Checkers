@@ -11,14 +11,10 @@ namespace checkers
     public class Board
     {
         private int[,] _gameboard;
-        public int[,] Gameboard
-        {
-            get => _gameboard;
-            set => _gameboard = value;
-        } 
-        public bool isWhiteTurn { get; set; }
-        public bool isJump { get; set; }
-        public bool isNextJump { get; set; }
+        public int[,] Gameboard { get; private set; }
+        public bool isWhiteTurn { get; private set; }
+        public bool isJump { get; private set; }
+        public bool isNextJump { get; private set; }
         public bool isWin{get; private set; }
         public List<Point[]> listMoves = new List<Point[]>();
         public Player playerWhite;

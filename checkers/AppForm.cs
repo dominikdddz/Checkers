@@ -1,4 +1,5 @@
 using Microsoft.VisualBasic.Devices;
+using System.Drawing;
 using System.Net.NetworkInformation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -8,20 +9,21 @@ namespace checkers
     {
         Board board;
         private PictureBox[,] _places = new PictureBox[8, 8];
-        private Point _selectedPieceLocation;
-        private List<Point[]> _allMoves;
+        private Point _selectedPieceLocation {  get; set; }
         Point[] _selectedMoves = new Point[10];
-        bool showMoves;
+        private bool showMoves { get; set; }
         public AppForm(bool isWhiteTurn, String Player1Name, String Player2Name, bool showMoves)
         {
             InitializeComponent();
-            InitializeGameBoard(isWhiteTurn, Player1Name, Player2Name);
             this.showMoves = showMoves;
+
+            InitializeGameBoard(isWhiteTurn, Player1Name, Player2Name); 
+            NewTurn();
         }
 
         private void InitializeGameBoard(bool isWhiteTurn, String Player1Name, String Player2Name) // create and display board with piece
         {
-            board = new Board(Player1Name, Player2Name,isWhiteTurn);
+            board = new Board(Player1Name, Player2Name, isWhiteTurn);
 
             int xLoc = 0, yLoc = 0;
             Color[] colors = new Color[] { Color.White, Color.Gray };
@@ -45,7 +47,6 @@ namespace checkers
                 xLoc = 0;
                 yLoc += 75;
             }
-            UpdatePlayerUI();
         }
 
         private void UpdateBoardUI() // update gameboard
@@ -61,27 +62,21 @@ namespace checkers
 
         private void UpdatePlayerUI() // update player text
         {
-            int color;
+            PlayerBlackScoreLabel.Text = board.playerBlack.Score.ToString();
+            PlayerWhiteScoreLabel.Text = board.playerWhite.Score.ToString();
+            if (board.isWin == true)
+                PlayerWin();
+
             if (board.isWhiteTurn == true)
             {
                 PlayerWhiteTurn.Visible = true;
                 Player2Turn.Visible = false;
-                color = 2;
             }
             else
             {
                 PlayerWhiteTurn.Visible = false;
                 Player2Turn.Visible = true;
-                color = 1;
             }
-            PlayerBlackScoreLabel.Text = board.playerBlack.Score.ToString();
-            PlayerWhiteScoreLabel.Text = board.playerWhite.Score.ToString();
-            if (board.isWin == true)
-            {
-                PlayerWin();
-            }
-            board.checkAllMovesForPlayer(color);
-            _allMoves = board.listMoves;
         }
 
         private void PlayerWin() // show win message 
@@ -94,6 +89,14 @@ namespace checkers
                 name = board.playerWhite.name;
             PLayerWinText.Text = name + " is win!";
             PLayerWinText.Visible = true;
+        }
+        private void NewTurn()
+        {
+            UpdatePlayerUI();
+            if (board.isWhiteTurn)
+                board.checkAllMovesForPlayer(2);
+            else
+                board.checkAllMovesForPlayer(1); 
         }
 
         private void displayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
@@ -140,11 +143,11 @@ namespace checkers
                 int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                 if (piece.Image != null)
                 {
+                    RemoveGreenPlaceFromBoard(_selectedMoves);
                     if (board.isJump == false)
                     {
-                        RemoveGreenPlaceFromBoard(_selectedMoves);
                         _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                        foreach (var moves in _allMoves)
+                        foreach (var moves in board.listMoves)
                         {
                             if (moves[0] == _selectedPieceLocation)
                             {
@@ -155,6 +158,7 @@ namespace checkers
                     }
                     else
                     {
+                        //_selectedPieceLocation = new Point();
                         displayAvailableMovesForSelectedPiece(piece, board.listMoves[0]);
                     }
 
@@ -172,7 +176,7 @@ namespace checkers
                     if (board.isNextJump == false)
                     {
                         board.changePlayerTurn();
-                        UpdatePlayerUI();
+                        NewTurn();
                     }
                 }
             };
@@ -204,15 +208,13 @@ namespace checkers
             {
                 _places[piece.X, piece.Y].Image = null; // clean place (remove piece)
             }
-            UpdatePlayerUI();
             _places[piece.X, piece.Y].SizeMode = PictureBoxSizeMode.CenterImage;
+            UpdatePlayerUI();
         }
 
         private void moveSelectedPiece(Point selectedPiece, Point move) // move selected piece on selected move place
         {
             board.movePiece(selectedPiece, move);
-            _places[move.X, move.Y].BackColor = Color.Gray;
-            _places[selectedPiece.X, selectedPiece.Y].BackColor = Color.Gray;
             UpdateBoardUI();
             RemoveGreenPlaceFromBoard(_selectedMoves);
         }
