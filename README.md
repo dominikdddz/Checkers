@@ -18,10 +18,10 @@ Project is created with:
 - [x] mode Player vs Player
 
 ### To do
+- [ ] add multiple capture jump
 - [ ] add force jump
-- [ ] add long jump (for king)
-- [ ] add variation size board (load from file)
-- [ ] undo last move
+- [ ] undo moves
+- [ ] add variation size board
 - [ ] add mode Player vs Computer
 
 ## Screenshots
