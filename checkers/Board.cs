@@ -15,15 +15,24 @@ namespace checkers
         {
             get => _gameboard;
             set => _gameboard = value;
+        } 
+        public bool isWhiteTurn { get; set; }
+        public bool isJump { get; set; }
+        public bool isNextJump { get; set; }
+        public bool isWin{get; private set; }
+        public List<Point[]> listMoves = new List<Point[]>();
+        public Player playerWhite;
+        public Player playerBlack;
+        private static int _boardSize = 8;
+        enum Pieces
+        {
+            Black = 1,
+            White = 2,
+            BlackKing = 3,
+            WhiteKing = 4
         }
-        int size = 8;
-        public bool isPlayerWhiteTurn;
-        public bool isCaptureMove;
-        public Point[] captureMove;
-        public Player PlayerWhite;
-        public Player PlayerBlack;
 
-        public Board(string boardSize, string PlayerWhiteName, string PlayerBlackName)
+        public Board(string playerWhiteName, string playerBlackName, bool isWhiteTurn)
         {
             Gameboard = new int[8, 8] { 
                 { 0,1,0,1,0,1,0,1 },
@@ -35,153 +44,158 @@ namespace checkers
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
             };  // 2 - white | 1 - black | 4 - white king | 3 - blak king
-
-            int white = 2;
-            int black = 1;
-            PlayerWhite = new Player(PlayerWhiteName, white);
-            PlayerBlack = new Player(PlayerBlackName, black);
-            isPlayerWhiteTurn = true;
-            isCaptureMove = false;
+            
+            this.isWhiteTurn = isWhiteTurn;
+            playerWhite = new Player(playerWhiteName, (int)Pieces.White);
+            playerBlack = new Player(playerBlackName, (int)Pieces.Black);
+            isJump = false;
         }
         public Board(int[,] gameboard)
         {
             Gameboard = gameboard;
-            int white = 2;
-            int black = 1;
-            PlayerWhite = new Player("Player 1", white);
-            PlayerBlack = new Player("Player 2", black);
-            isPlayerWhiteTurn = true;
-            isCaptureMove = false;
+            playerWhite = new Player("Player 1", (int)Pieces.White);
+            playerBlack = new Player("Player 2", (int)Pieces.Black);
+            isWhiteTurn = true;
+            isJump = false;
         }
         public void changePlayerTurn()
         {
-            isPlayerWhiteTurn ^= true;
-            isCaptureMove = false;
+            isWhiteTurn ^= true;
+            isJump = false;
+            isNextJump = false;
         }
 
         public bool isPLayerWin(Player player)
         {
             if (player.Score == 12)
-            {
                 return true;
-            }
             else
                 return false;
         }
 
-        public List<Point[]> checkAllMovesForPlayer(int color)
+        public void checkAllMovesForPlayer(int color)
         {
-            int[] colors = getPlayerColors(color);
-            List<Point[]> list = new List<Point[]>();
+            int[] playerColors = getPlayerColors(color);
+            listMoves.Clear();
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    if (colors.Contains(Gameboard[x, y]))
+                    if (playerColors.Contains(Gameboard[x, y]))
                     {
-                        Point[] moves = checkAvailableMoves(new Point(x, y));
-                        if (moves[0].X + moves[0].Y > 0)
+                        Point[] availableMoves = checkAvailableMoves(new Point(x, y));
+                        if (availableMoves[0].X + availableMoves[0].Y > 0)
                         {
-                            Point[] piece = new Point[moves.Length + 1];
+                            Point[] piece = new Point[availableMoves.Length + 1];
                             piece[0] = new Point(x, y);
                             int i = 1;
-                            foreach (Point p in moves)
+                            foreach (Point p in availableMoves)
                             {
                                 piece[i] = p;
                                 i++;
                             }
-                            list.Add(piece);
+                            listMoves.Add(piece);
                         }
                     }
                 }
             }
-            return list;
         }
 
-        public bool movePiece(Point selectedPiece, Point newPosition)
+        public void checkMovesAfterJump(Point jumpPoint)
         {
-            if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // is capture move
-            {
-                int tmpPiece = Gameboard[selectedPiece.X, selectedPiece.Y];
-                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
-                Gameboard[newPosition.X, newPosition.Y] = tmpPiece;
+            isNextJump = false;
 
-                CaptureMove(selectedPiece);
-                Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2] = 0;
-                checkIsPieceChnageToKing(new Point(newPosition.X, newPosition.Y));
-                return true;
-            }
-            else // normal move
+            Point[] moves = checkAvailableMoves(jumpPoint);
+            Point[] tmpMoves = new Point[moves.Length + 1];
+
+            tmpMoves[0] = new Point(jumpPoint.X, jumpPoint.Y);
+            int i = 1;
+            foreach (Point move in moves)
             {
-                int tmpPiece = Gameboard[selectedPiece.X, selectedPiece.Y];
-                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
-                Gameboard[newPosition.X, newPosition.Y] = tmpPiece;
-                checkIsPieceChnageToKing(new Point(newPosition.X, newPosition.Y));
-                if (isPlayerWhiteTurn == true)
+                tmpMoves[i] = move;
+                i++;
+                if (move.X + move.Y > 0)
                 {
-                    PlayerWhite.Jumps++;
+                    isNextJump=true;
                 }
-                else
-                {
-                    PlayerBlack.Jumps++;
-                }
-                return false;
+            }
+            if(isNextJump==true) {
+                listMoves.Clear();
+                listMoves.Add(tmpMoves);
             }
         }
-        private bool checkIsCaptureMove(Point[] moves) // check is available capture move for player
+
+        public void movePiece(Point selectedPiece, Point newPosition)
+        {
+            if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // jump
+            {
+                isJump = true;
+                Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
+                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
+                Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2] = 0;
+                addScorePlayer(selectedPiece);
+                //checkMovesAfterJump(newPosition);
+            }
+            else // move
+            {
+                Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
+                Gameboard[selectedPiece.X, selectedPiece.Y] = 0;
+            }
+            isChangeToKing(new Point(newPosition.X, newPosition.Y));
+        }
+
+        /*
+        private bool checkIsCaptureMove(Point[] moves) // check is available jump for player
         {
             foreach (var move in moves)
             {
                 if (move.IsEmpty) continue;
                 if (Math.Pow(move.X - moves[0].X, 2) > 2)
                 {
-                    captureMove = moves;
+                    jumpMoves = moves;
                     return true;
                 }
             }
             return false;
         }
+        */
 
-        private void checkIsPieceChnageToKing(Point actualPosition) // check is piece change to king
+        private void isChangeToKing(Point actualPosition) // check is piece change to king
         {
             int color = Gameboard[actualPosition.X, actualPosition.Y];
             if(color == 2 && actualPosition.X == 0)
             {
-                Gameboard[actualPosition.X, actualPosition.Y] = 4;
+                Gameboard[actualPosition.X, actualPosition.Y] = (int)Pieces.WhiteKing;
             }
-            else if(color == 1 && actualPosition.X == size - 1)
+            else if(color == 1 && actualPosition.X == _boardSize - 1)
             {
-                Gameboard[actualPosition.X, actualPosition.Y] = 3;
+                Gameboard[actualPosition.X, actualPosition.Y] = (int)Pieces.BlackKing;
             }
         }
 
-        private void CaptureMove(Point actualPosition)
+        private void addScorePlayer(Point actualPosition)
         {
-            if (isPlayerWhiteTurn == true)
-            {
-                PlayerWhite.Score++;
-                PlayerWhite.Jumps++;
-            }
+            if (isWhiteTurn == true)
+                playerWhite.Score++;
             else
-            {
-                PlayerBlack.Score++;
-                PlayerBlack.Jumps++;
-            }
+                playerBlack.Score++;
+            if (playerWhite.Score == 12 || playerBlack.Score == 12)
+                isWin = true;
         }
 
         private bool checkIsMoveOutOfBounds(int X, int Y)
         {
             bool result = false;
-            if (X < 0 || X > size - 1) // check is out of bounds on up || down side
+            if (X < 0 || X > _boardSize - 1) // check is out of bounds on up || down side
                 result = true;
-            if (Y < 0 || Y > size - 1) // check is out of bounds on left || right side
+            if (Y < 0 || Y > _boardSize - 1) // check is out of bounds on left || right side
                 result = true;
             return result;
         }
 
         private bool isKing(Point SelectedPiece)
         {
-            if (Gameboard[SelectedPiece.X, SelectedPiece.Y] == 3 || Gameboard[SelectedPiece.X, SelectedPiece.Y] == 4)
+            if (Gameboard[SelectedPiece.X, SelectedPiece.Y] == (int)Pieces.BlackKing || Gameboard[SelectedPiece.X, SelectedPiece.Y] == (int)Pieces.WhiteKing)
             {
                 return true;
             }
@@ -305,7 +319,5 @@ namespace checkers
             } 
             return moves;
         }
-
-
     }
 }

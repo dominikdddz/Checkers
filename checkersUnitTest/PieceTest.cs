@@ -24,9 +24,9 @@ namespace checkersUnitTest
             ListMoves.Add(centerPiece);
 
             var board = new Board(tmpGameboard);
-            var moves = board.checkAllMovesForPlayer(2);
+            board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, moves);
+            Assert.Equal(ListMoves, board.listMoves);
         }
         [Fact]
         public void White_Piece_Moves_Left() // In left, piece has 1 move
@@ -47,9 +47,9 @@ namespace checkersUnitTest
             ListMoves.Add(LeftPiece);
 
             var board = new Board(tmpGameboard);
-            var moves = board.checkAllMovesForPlayer(2);
+            board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, moves);
+            Assert.Equal(ListMoves, board.listMoves);
         }
         [Fact]
         public void White_Piece_Moves_Right() // In right, piece has 1 move
@@ -70,9 +70,9 @@ namespace checkersUnitTest
             ListMoves.Add(rightPiece);
 
             var board = new Board(tmpGameboard);
-            var moves = board.checkAllMovesForPlayer(2);
+            board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, moves);
+            Assert.Equal(ListMoves, board.listMoves);
         }
         [Fact]
         public void White_Piece_Convert_To_King() // check is piece convert to king after move to up board line
@@ -89,7 +89,7 @@ namespace checkersUnitTest
             };
 
             var board = new Board(tmpGameboard);
-            var moves = board.movePiece(new Point(1, 6), new Point(0, 5));
+            board.movePiece(new Point(1, 6), new Point(0, 5));
 
             Assert.Equal(4, board.Gameboard[0, 5]);
         }
@@ -112,9 +112,9 @@ namespace checkersUnitTest
             ListMoves.Add(centerPiece);
 
             var board = new Board(tmpGameboard);
-            var moves = board.checkAllMovesForPlayer(2);
+            board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, moves);
+            Assert.Equal(ListMoves, board.listMoves);
         }
         [Fact]
         public void Piece_Capture() // White piece capture jump
@@ -130,7 +130,7 @@ namespace checkersUnitTest
                 { 0,0,0,0,0,0,0,0 }
             };
             var board = new Board(tmpGameboard);
-            var moves = board.movePiece(new Point(5, 4), new Point(3, 2));
+            board.movePiece(new Point(5, 4), new Point(3, 2));
 
             Assert.Equal(0, board.Gameboard[4,3]);
         }

@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelloForm));
             groupBox1 = new GroupBox();
+            checkBoxShowMoves = new CheckBox();
             comboBoxFirstMove = new ComboBox();
             label4 = new Label();
             comboBoxBoardSize = new ComboBox();
@@ -41,7 +42,6 @@
             label1 = new Label();
             labelError = new Label();
             button1 = new Button();
-            checkBoxShowMoves = new CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -59,6 +59,18 @@
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Game Settings";
+            // 
+            // checkBoxShowMoves
+            // 
+            checkBoxShowMoves.AutoSize = true;
+            checkBoxShowMoves.Checked = true;
+            checkBoxShowMoves.CheckState = CheckState.Checked;
+            checkBoxShowMoves.Location = new Point(7, 146);
+            checkBoxShowMoves.Name = "checkBoxShowMoves";
+            checkBoxShowMoves.Size = new Size(93, 19);
+            checkBoxShowMoves.TabIndex = 4;
+            checkBoxShowMoves.Text = "Show moves";
+            checkBoxShowMoves.UseVisualStyleBackColor = true;
             // 
             // comboBoxFirstMove
             // 
@@ -168,18 +180,6 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // checkBoxShowMoves
-            // 
-            checkBoxShowMoves.AutoSize = true;
-            checkBoxShowMoves.Checked = true;
-            checkBoxShowMoves.CheckState = CheckState.Checked;
-            checkBoxShowMoves.Location = new Point(7, 146);
-            checkBoxShowMoves.Name = "checkBoxShowMoves";
-            checkBoxShowMoves.Size = new Size(93, 19);
-            checkBoxShowMoves.TabIndex = 4;
-            checkBoxShowMoves.Text = "Show moves";
-            checkBoxShowMoves.UseVisualStyleBackColor = true;
-            // 
             // HelloForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -192,6 +192,7 @@
             Controls.Add(groupBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "HelloForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Checkers";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

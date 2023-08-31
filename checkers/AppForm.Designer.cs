@@ -192,6 +192,7 @@
             Controls.Add(mainBoard);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "AppForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Checkers";
             Load += UpdateGameBoard;
             ((System.ComponentModel.ISupportInitialize)mainBoard).EndInit();

@@ -14,10 +14,10 @@ namespace checkers
     {
         public bool isCorrect { get; set; }
         public string boardSize { get; set; }
-        public string firstStart { get; set; }
         public string Player1Name { get; set; }
         public string Player2Name { get; set; }
         public bool showMoves { get; set; }
+        public bool isWhiteTurn { get; set; }
 
 
         public HelloForm()
@@ -32,7 +32,7 @@ namespace checkers
             if (checkSettings() == true)
             {
                 boardSize = comboBoxBoardSize.Text;
-                firstStart = comboBoxFirstMove.Text;
+                isWhiteTurn = whichTurn(comboBoxFirstMove.Text);
                 Player1Name = textBoxPlayer1.Text;
                 Player2Name = textBoxPlayer2.Text;
                 showMoves = checkBoxShowMoves.Checked;
@@ -69,6 +69,13 @@ namespace checkers
                 return false;
             }
             return true;
+        }
+        private bool whichTurn(string firstStart)
+        {
+            if (firstStart == "Player 1")
+                return true;
+            else
+                return false;
         }
     }
 }

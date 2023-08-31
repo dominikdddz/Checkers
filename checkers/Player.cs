@@ -16,19 +16,12 @@ namespace checkers
             get => _score;
             set => _score = value;
         }
-        int _jumps;
-        public int Jumps
-        {
-            get => _jumps;
-            set => _jumps = value;
-        }
 
         public Player(string name, int pieceColor)
         {
             this.name = name;
             this.pieceColor = pieceColor;
             _score = 0;
-            _jumps = 0;
         }
     }
 }
