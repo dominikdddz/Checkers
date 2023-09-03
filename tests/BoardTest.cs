@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using checkers;
 using Microsoft.VisualBasic.Devices;
 
-namespace checkersUnitTest
+namespace tests
 {
     public class BoardTest
     {
@@ -40,7 +40,7 @@ namespace checkersUnitTest
                 { 0,0,0,0,0,0,0,0 }
             };
             var board = new Board(tmpGameboard);
-            board.movePiece(new Point(5, 4), new Point(3, 2));
+            board.makeMove(new Point(5, 4), new Point(3, 2));
             Assert.Equal(1, board.playerWhite.Score);
         }
     }

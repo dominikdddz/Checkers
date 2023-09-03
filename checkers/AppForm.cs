@@ -1,3 +1,4 @@
+using checkers.AI;
 using Microsoft.VisualBasic.Devices;
 using System.Drawing;
 using System.Net.NetworkInformation;
@@ -11,7 +12,11 @@ namespace checkers
         private PictureBox[,] _places = new PictureBox[8, 8];
         private Point _selectedPieceLocation {  get; set; }
         Point[] _selectedMoves = new Point[10];
-        private bool showMoves { get; set; }
+        private bool showMoves;
+        private bool isAITurn = false;
+        private bool isAIPlay = true;
+
+
         public AppForm(bool isWhiteTurn, String Player1Name, String Player2Name, bool showMoves)
         {
             InitializeComponent();
@@ -87,16 +92,35 @@ namespace checkers
                 name = board.playerBlack.name;
             else
                 name = board.playerWhite.name;
+            Player2Turn.Visible = false;
+            PlayerWhiteTurn.Visible = false;
             PLayerWinText.Text = name + " is win!";
             PLayerWinText.Visible = true;
         }
         private void NewTurn()
         {
             UpdatePlayerUI();
-            if (board.isWhiteTurn)
-                board.checkAllMovesForPlayer(2);
-            else
-                board.checkAllMovesForPlayer(1); 
+            if (isAIPlay == false) // for player vs player
+            {
+                if (board.isWhiteTurn)
+                    board.checkAllMovesForPlayer(2);
+                else
+                    board.checkAllMovesForPlayer(1);
+            }
+            else // for player vs computer
+            {
+                if (board.isWhiteTurn)
+                    board.checkAllMovesForPlayer(2);
+                else
+                {
+                    isAITurn = true;
+                    AITurn();
+                    board.changePlayerTurn();
+                    isAITurn = false;
+                    board.checkAllMovesForPlayer(2);
+                    UpdatePlayerUI();
+                }       
+            }
         }
 
         private void displayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
@@ -109,17 +133,7 @@ namespace checkers
                     if (move.IsEmpty) continue;
                     if (move != moves[0])
                     {
-                        if (board.isJump == true)
-                        {
-                            if (Math.Pow(move.X - moves[0].X, 2) > 2)
-                            {
-                                _places[move.X, move.Y].BackColor = Color.Green;
-                            }
-                        }
-                        else
-                        {
-                            _places[move.X, move.Y].BackColor = Color.Green;
-                        }
+                        _places[move.X, move.Y].BackColor = Color.Green;
                     }
                 }
             }
@@ -139,42 +153,45 @@ namespace checkers
         {
             selectedPlace.MouseClick += (sender2, e2) => // check first click on board
             {
-                PictureBox piece = sender2 as PictureBox;
-                int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
-                if (piece.Image != null)
+                if (isAITurn == false)
                 {
-                    RemoveGreenPlaceFromBoard(_selectedMoves);
-                    if (board.isJump == false)
+                    PictureBox piece = sender2 as PictureBox;
+                    int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
+                    if (piece.Image != null)
                     {
-                        _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                        foreach (var moves in board.listMoves)
+                        RemoveGreenPlaceFromBoard(_selectedMoves);
+                        if (board.isJump == false)
                         {
-                            if (moves[0] == _selectedPieceLocation)
+                            _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
+                            foreach (var moves in board.listMoves)
                             {
-                                _selectedMoves = moves;
-                                displayAvailableMovesForSelectedPiece(piece, moves);
+                                if (moves[0] == _selectedPieceLocation)
+                                {
+                                    _selectedMoves = moves;
+                                    displayAvailableMovesForSelectedPiece(piece, moves);
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        //_selectedPieceLocation = new Point();
-                        displayAvailableMovesForSelectedPiece(piece, board.listMoves[0]);
-                    }
+                        else
+                        {
+                            //_selectedPieceLocation = new Point();
+                            displayAvailableMovesForSelectedPiece(piece, board.listMoves[0]);
+                        }
 
+                    }
                 }
             };
 
             selectedPlace.MouseClick += (sender3, e3) => // check second click on board
             {
-                PictureBox piece = sender3 as PictureBox;
-                int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
-                if (selectedPlace.BackColor == Color.Green)
+                if (isAITurn == false)
                 {
-                    Point GreenMove = new Point(placeLocation[0], placeLocation[1]);
-                    moveSelectedPiece(_selectedPieceLocation, GreenMove);
-                    if (board.isNextJump == false)
+                    PictureBox piece = sender3 as PictureBox;
+                    int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
+                    if (selectedPlace.BackColor == Color.Green)
                     {
+                        Point GreenMove = new Point(placeLocation[0], placeLocation[1]);
+                        moveSelectedPiece(_selectedPieceLocation, GreenMove);
                         board.changePlayerTurn();
                         NewTurn();
                     }
@@ -214,7 +231,7 @@ namespace checkers
 
         private void moveSelectedPiece(Point selectedPiece, Point move) // move selected piece on selected move place
         {
-            board.movePiece(selectedPiece, move);
+            board.makeMove(selectedPiece, move);
             UpdateBoardUI();
             RemoveGreenPlaceFromBoard(_selectedMoves);
         }
@@ -228,13 +245,23 @@ namespace checkers
             }
         }
 
+        private void AITurn()
+        {
+            MinMax AI = new MinMax(board, 3);
+            AI.Calculate();
+            moveSelectedPiece(AI.BestMove[0], AI.BestMove[1]);
+            //board.makeMove(AI.bestMove[0], AI.bestMove[1]);
+            //moveSelectedPiece(move[0], move[1]);
+            //UpdateBoardUI();
+        }
+
         private void UpdateGameBoard(object sender, EventArgs e) // scanning board to check if was click on place
         {
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    if (mainBoard.Enabled == true)
+                    if (board.isWin==false)
                         MouseClickPlace(_places[x, y]);
                     else
                         break;

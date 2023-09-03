@@ -1,7 +1,7 @@
 using checkers;
 using System.Drawing;
 
-namespace checkersUnitTest
+namespace tests
 {
     public class PieceTest
     {
@@ -89,7 +89,7 @@ namespace checkersUnitTest
             };
 
             var board = new Board(tmpGameboard);
-            board.movePiece(new Point(1, 6), new Point(0, 5));
+            board.makeMove(new Point(1, 6), new Point(0, 5));
 
             Assert.Equal(4, board.Gameboard[0, 5]);
         }
@@ -130,7 +130,7 @@ namespace checkersUnitTest
                 { 0,0,0,0,0,0,0,0 }
             };
             var board = new Board(tmpGameboard);
-            board.movePiece(new Point(5, 4), new Point(3, 2));
+            board.makeMove(new Point(5, 4), new Point(3, 2));
 
             Assert.Equal(0, board.Gameboard[4,3]);
         }

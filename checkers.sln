@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "checkers", "checkers\checke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests\tests.csproj", "{200019D0-36FD-461B-934C-958D081F1A24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleBoard", "ConsoleBoard\ConsoleBoard.csproj", "{BDE0EA12-6F83-42CB-A406-784107ACC095}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{200019D0-36FD-461B-934C-958D081F1A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{200019D0-36FD-461B-934C-958D081F1A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{200019D0-36FD-461B-934C-958D081F1A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDE0EA12-6F83-42CB-A406-784107ACC095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDE0EA12-6F83-42CB-A406-784107ACC095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDE0EA12-6F83-42CB-A406-784107ACC095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDE0EA12-6F83-42CB-A406-784107ACC095}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
