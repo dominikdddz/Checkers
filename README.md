@@ -7,7 +7,7 @@
 * [Screenshots](#screenshots)
 
 ## General Info
-Checkers game in mode player vs player
+Checkers game in mode player vs player and player vs computer
 
 ## Technologies
 Project is created with:
@@ -16,10 +16,10 @@ Project is created with:
 
 ## Features
 - [x] mode Player vs Player
-- [x] mode Player vs Computer (Minmax algorithm)
+- [x] mode Player vs Computer
 
 ### To do
-- [ ] improvment evaluation function (Minmax algorithm)
+- [ ] improvement evaluation function (Minmax algorithm)
 - [ ] add multiple capture jump
 - [ ] add force jump
 - [ ] undo moves
