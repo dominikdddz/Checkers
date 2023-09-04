@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace checkers.AI
         }
         private (int, Point[]) MinMaxAlgorithm(Board board, int depth, bool maxPlayer)
         {
-            if (depth == 0 || board.isWin == true)
+            if (depth == 0 || board.IsWin == true)
             {
                 Point[] points = new Point[2];
                 return (EvaluateMove(board), points);
@@ -35,10 +36,10 @@ namespace checkers.AI
                 int maxValue = int.MinValue;
                 Point[] Best = new Point[2];
                 board.checkAllMovesForComputer(1);
-                foreach (var move in board.listMoves)
+                foreach (var move in board.ListMoves)
                 {
                     Board child = (Board)board.Clone();
-                    child.makeMove(move[0], move[1]);
+                    child.MakeMove(move[0], move[1]);
                     var result = MinMaxAlgorithm(child, depth - 1, false);
                     maxValue = Math.Max(maxValue, result.Item1);
                     if (result.Item1 <= maxValue)
@@ -54,10 +55,10 @@ namespace checkers.AI
                 int minValue = int.MaxValue;
                 Point[] Best = new Point[2];
                 board.checkAllMovesForComputer(2);
-                foreach (var move in board.listMoves)
+                foreach (var move in board.ListMoves)
                 {
                     Board child = (Board)board.Clone();
-                    child.makeMove(move[0], move[1]);
+                    child.MakeMove(move[0], move[1]);
                     var result = MinMaxAlgorithm(child, depth - 1, true);
                     minValue = Math.Min(minValue, result.Item1);
                     if (result.Item1 >= minValue)
@@ -69,21 +70,43 @@ namespace checkers.AI
                 return (minValue, Best);
             }
         }
+        /*
+        Evaluation function for MinMax algorithm
+        Pawn value = 1
+        King value = 2
+        Board position value = [1-4] 
+        */
         public int EvaluateMove(Board board)
         {
-            return board.evaluate();
-        }
-        static void display(Board board)
-        {
-            for (int i = 0; i < 8; i++)
+            int[] opponent = new int[2] { 1, 3 };
+            int[,] boardValue = new int[8, 8] {
+                { 0,4,0,4,0,4,0,4 },
+                { 4,0,3,0,3,0,3,0 },
+                { 0,3,0,2,0,2,0,4 },
+                { 4,0,2,0,1,0,3,0 },
+                { 0,3,0,1,0,2,0,4 },
+                { 4,0,2,0,2,0,3,0 },
+                { 0,3,0,3,0,3,0,4 },
+                { 4,0,4,0,4,0,4,0 }
+            };
+            int scorePlayer = 0, scoreComputer = 0;
+            for(int i = 0; i < 8; i++)
             {
-                for (int j = 0; j < 8; j++)
+                for (int j = 0;j<8; j++)
                 {
-                    Console.Write(board.Gameboard[1, j].ToString());
-                    Console.Write("|");
+                    if (board.Gameboard[i, j] != 0)
+                    {
+                        if (opponent.Contains(board.Gameboard[i, j]))
+                            scoreComputer += boardValue[i, j];
+                        else
+                            scorePlayer += boardValue[i, j];
+                    }
                 }
-                Console.WriteLine();
             }
+            int pawns = board.PlayerBlack.PawnsLeft - board.PlayerWhite.PawnsLeft;
+            int kings = board.PlayerBlack.KingsLeft * 2 - board.PlayerWhite.KingsLeft * 2;
+            int score = scoreComputer - scorePlayer;
+            return pawns + kings + score;
         }
     }
 }

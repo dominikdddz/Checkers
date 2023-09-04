@@ -9,7 +9,7 @@ internal static class Program
   
     static void Main()
     {
-        Board board = new Board("Player 1", "Player 2", true);
+        Board board = new Board("Player 1", "Player 2", true,false);
         int[,] tmpGameboard = new int[8, 8] {
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },
@@ -43,7 +43,7 @@ internal static class Program
     static void checkMoves(Board board)
     {
         int j = 0;
-        foreach (Point[] move in board.listMoves)
+        foreach (Point[] move in board.ListMoves)
         {
             Point[] m = new Point[2];
             m[0] = move[0];
@@ -53,7 +53,7 @@ internal static class Program
                 {
                     m[1] = move[i];
                     Board board1 = (Board)board.Clone();
-                    board1.makeMove(m[0], m[1]);
+                    board1.MakeMove(m[0], m[1]);
                     display(j + "" + i, board1);
                 }
             }

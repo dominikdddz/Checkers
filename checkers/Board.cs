@@ -10,31 +10,33 @@ namespace checkers
 {
     public class Board : ICloneable
     {
-        private int[,] _gameboard;
         public int[,] Gameboard { get; private set; }
-        public bool isWhiteTurn { get; private set; }
-        public bool isJump { get; private set; }
-        public bool isNextJump { get; private set; }
-        public bool isWin{get; private set; }
-        public List<Point[]> listMoves = new List<Point[]>();
-        public Player playerWhite;
-        public Player playerBlack;
-        private int whiteLeft { get; set; }
-        private int blackLeft { get; set; }
-        private int whiteKing { get; set; }
-        private int blackKing { get; set; }
+        public bool IsWhiteTurn { get; private set; }
+        public bool IsJump { get; private set; }
+        public bool IsNextJump { get; private set; }
+        public bool IsWin{get; private set; }
+
+        private int[] _whitePieces = new int[2] { 2, 4 };
+        private int[] _blackPieces = new int[2] { 1, 3 };
         private static int _boardSize = 8;
+
+        public List<Point[]> ListMoves = new List<Point[]>();
+        public Player PlayerWhite;
+        public Player PlayerBlack;
         enum Pieces
         {
-            Empty = 0,
-            Black = 1,
-            White = 2,
-            BlackKing = 3,
-            WhiteKing = 4
+            Empty,
+            BlackPawn,
+            WhitePawn,
+            BlackKing,
+            WhiteKing
         }
 
-        public Board(string playerWhiteName, string playerBlackName, bool isWhiteTurn)
+        public Board(string playerWhiteName, string playerBlackName, bool isWhiteTurn, bool isPlayerVsAi) // default constructor
         {
+            PlayerWhite = new Player(playerWhiteName, _whitePieces);
+            PlayerBlack = new Player(playerBlackName, _blackPieces);
+
             Gameboard = new int[8, 8] { 
                 { 0,1,0,1,0,1,0,1 },
                 { 1,0,1,0,1,0,1,0 },
@@ -44,40 +46,31 @@ namespace checkers
                 { 2,0,2,0,2,0,2,0 },
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
-            };  // 0 - empty | 1 - black | 2 - white |  3 - blak king | 4 - white king
-
-            this.isWhiteTurn = isWhiteTurn;
-            playerWhite = new Player(playerWhiteName, (int)Pieces.White);
-            playerBlack = new Player(playerBlackName, (int)Pieces.Black);
-            whiteLeft = 12;
-            blackLeft = 12;
-            whiteKing = 0;
-            blackKing = 0;
-            isJump = false;
+            };
+            IsWhiteTurn = isWhiteTurn;
+            IsJump = false;
         }
-        public Board(int[,] gameboard, int whiteLeft, int blackLeft) //
+        public Board(int[,] gameboard, int whitePawnsLeft, int blackPawnsLeft, int whiteKingsLeft, int blackKingsLeft) // custom constructor for custom board
         {
-            Gameboard = gameboard;
-            this.whiteLeft = whiteLeft;
-            this.blackLeft = blackLeft;
-            playerWhite = new Player("Player 1", (int)Pieces.White);
-            playerBlack = new Player("Player 2", (int)Pieces.Black);
-            isWhiteTurn = true;
-            isJump = false;
+            int[] whitePieces = new int[2] { 2, 4 };
+            int[] blackPieces = new int[2] { 1, 3 };
+            this.Gameboard = gameboard;
+            PlayerWhite = new Player("Player 1", whitePieces, whitePawnsLeft, whiteKingsLeft);
+            PlayerBlack = new Player("Player 2", blackPieces, blackPawnsLeft, blackKingsLeft);
+            IsWhiteTurn = true;
+            IsJump = false;
         }
-
-        public Board()
+        public Board(Player playerWhite, Player playerBlack) // constructor for deep copy object
         {
-            Gameboard = new int[8, 8];
-            playerWhite = new Player("Player 1", (int)Pieces.White);
-            playerBlack = new Player("Player 2", (int)Pieces.Black);
+            PlayerWhite = playerWhite;
+            PlayerBlack = playerBlack;
         }
 
         public void changePlayerTurn()
         {
-            isWhiteTurn ^= true;
-            isJump = false;
-            isNextJump = false;
+            IsWhiteTurn ^= true;
+            IsJump = false;
+            IsNextJump = false;
         }
 
         public bool isPLayerWin(Player player)
@@ -90,8 +83,8 @@ namespace checkers
 
         public void checkAllMovesForComputer(int color)
         {
-            int[] playerColors = getPlayerColors(color);
-            listMoves.Clear();
+            int[] playerColors = GetColors(color, false);
+            ListMoves.Clear();
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
@@ -108,7 +101,7 @@ namespace checkers
                                     Point[] piece = new Point[2];
                                     piece[0] = new Point(x, y);
                                     piece[1] = p;
-                                    listMoves.Add(piece);
+                                    ListMoves.Add(piece);
                                 }
                             }  
                         }
@@ -119,8 +112,8 @@ namespace checkers
 
         public void checkAllMovesForPlayer(int color)
         {
-            int[] playerColors = getPlayerColors(color);
-            listMoves.Clear();
+            int[] playerColors = GetColors(color, false);
+            ListMoves.Clear();
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
@@ -141,44 +134,18 @@ namespace checkers
                                     i++;
                                 }
                             }
-                            listMoves.Add(piece);
+                            ListMoves.Add(piece);
                         }
                     }
                 }
             }
         }
 
-        /*
-        public void checkMovesAfterJump(Point jumpPoint)
-        {
-            isNextJump = false;
-
-            Point[] moves = checkAvailableMoves(jumpPoint);
-            Point[] tmpMoves = new Point[moves.Length + 1];
-
-            tmpMoves[0] = new Point(jumpPoint.X, jumpPoint.Y);
-            int i = 1;
-            foreach (Point move in moves)
-            {
-                tmpMoves[i] = move;
-                i++;
-                if (move.X + move.Y > 0)
-                {
-                    isNextJump=true;
-                }
-            }
-            if(isNextJump==true) {
-                listMoves.Clear();
-                listMoves.Add(tmpMoves);
-            }
-        }
-        */
-
-        public void makeMove(Point selectedPiece, Point newPosition)
+        public void MakeMove(Point selectedPiece, Point newPosition)
         {
             if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // jump
             {
-                isJump = true;
+                IsJump = true;
                 addScore(Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2]);
                 Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
@@ -191,81 +158,46 @@ namespace checkers
                 Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
             }
-            isChangeToKing(new Point(newPosition.X, newPosition.Y));
+            ChangeToKing(new Point(newPosition.X, newPosition.Y));
         }
 
-        /*
-        private bool checkIsCaptureMove(Point[] moves) // multijump
-        {
-            foreach (var move in moves)
-            {
-                if (move.IsEmpty) continue;
-                if (Math.Pow(move.X - moves[0].X, 2) > 2)
-                {
-                    jumpMoves = moves;
-                    return true;
-                }
-            }
-            return false;
-        }
-        */
-
-        private void isChangeToKing(Point actualPosition) // check is piece change to king
+        private void ChangeToKing(Point actualPosition) // check is piece change to king
         {
             int color = Gameboard[actualPosition.X, actualPosition.Y];
-            if(color == (int)Pieces.White && actualPosition.X == 0)
+            if(color == (int)Pieces.WhitePawn && actualPosition.X == 0)
             {
                 Gameboard[actualPosition.X, actualPosition.Y] = (int)Pieces.WhiteKing;
-                whiteKing++;
+                PlayerWhite.AddKing();
             }
-            else if(color == (int)Pieces.Black && actualPosition.X == _boardSize - 1)
+            else if(color == (int)Pieces.BlackPawn && actualPosition.X == _boardSize - 1)
             {
                 Gameboard[actualPosition.X, actualPosition.Y] = (int)Pieces.BlackKing;
-                blackKing++;
+                PlayerWhite.AddKing();
             }
         }
 
         private void addScore(int piece) // add score for capture opponent piece
         {
-            if (piece == (int)Pieces.Black || piece == (int)Pieces.BlackKing)
+            if (piece == (int)Pieces.BlackPawn || piece == (int)Pieces.BlackKing)
             {
-                playerWhite.Score++;
-                blackLeft--;
-                if(piece == (int)Pieces.BlackKing)
-                    blackKing--;      
+                if (piece == (int)Pieces.BlackKing)
+                    PlayerBlack.CaptureKing();
+                else
+                    PlayerBlack.CapturePawns();
+                PlayerWhite.IncreaseScore();
             }
             else
             {
-                playerBlack.Score++;
-                whiteLeft--;
-                if(piece == (int)Pieces.WhiteKing)
-                    whiteKing--;
+                if (piece == (int)Pieces.WhiteKing)
+                    PlayerWhite.CaptureKing();
+                else 
+                    PlayerWhite.CapturePawns();
+                PlayerBlack.IncreaseScore();
             }
-            if (playerWhite.Score == 12 || playerBlack.Score == 12)
-                isWin = true;
+            if (PlayerWhite.Score == 12 || PlayerBlack.Score == 12)
+                IsWin = true;
         }
 
-        private bool checkIsMoveOutOfBounds(int X, int Y)
-        {
-            bool result = false;
-            if (X < 0 || X > _boardSize - 1) // check is out of bounds on up || down side
-                result = true;
-            if (Y < 0 || Y > _boardSize - 1) // check is out of bounds on left || right side
-                result = true;
-            return result;
-        }
-
-        private bool isKing(Point SelectedPiece)
-        {
-            if (Gameboard[SelectedPiece.X, SelectedPiece.Y] == (int)Pieces.BlackKing || Gameboard[SelectedPiece.X, SelectedPiece.Y] == (int)Pieces.WhiteKing)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
         private Point[] addMove(Point[] moves, Point move)
         {
             Point[] tmp = moves;
@@ -279,49 +211,52 @@ namespace checkers
             }
             return moves;
         }
-        private int[] getOpponentColors(int color)      // get opponent color id
+
+        private bool IsKing(int color) // return is piece is king or pawn
         {
-            int[] colors = new int[2];
-            if (color == 2 || color == 4)
-            {
-                colors[0] = 1;
-                colors[1] = 3;
-            }
+            if (color == (int)Pieces.BlackKing || color == (int)Pieces.WhiteKing)
+                return true;
             else
-            {
-                colors[0] = 2;
-                colors[1] = 4;
-            }
-            return colors;
+                return false;
         }
 
-        private int[] getPlayerColors(int color)      // get player color id
+        private int[] GetColors(int color, bool isOppnent) // get player or opponent colors
         {
-            int[] colors = new int[2];
-            if (color == 2 || color == 4)
+            if (isOppnent == false)
             {
-                colors[0] = 2;
-                colors[1] = 4;
+                if (PlayerWhite.PlayerColors.Contains(color))
+                    return PlayerWhite.PlayerColors;
+                else
+                    return PlayerBlack.PlayerColors;
             }
             else
             {
-                colors[0] = 1;
-                colors[1] = 3;
+                if (PlayerWhite.PlayerColors.Contains(color))
+                    return PlayerBlack.PlayerColors;
+                else
+                    return PlayerWhite.PlayerColors;
             }
-            return colors;
+        }
+
+        private bool checkIsMoveOutOfBounds(int X, int Y)
+        {
+            bool result = false;
+            if (X < 0 || X > _boardSize - 1) // check is out of bounds on up || down side
+                result = true;
+            if (Y < 0 || Y > _boardSize - 1) // check is out of bounds on left || right side
+                result = true;
+            return result;
         }
 
         private Point[] checkAvailableMoves(Point SelectedPlace)
-        {
-            bool king = isKing(SelectedPlace);
+        {  
             int color = Gameboard[SelectedPlace.X, SelectedPlace.Y];        // get piece color id;
+            bool king = IsKing(color);
+            int[] opponent = GetColors(color, true);
 
-            int[] opponent = getOpponentColors(color);
-
-            
             Point[] moves = (king == true) ? new Point[4] : new Point[2]; // if king == 4 then moves = 4 else moves = 2
 
-            if (color == (int)Pieces.White || king == true)     // check move place for white piece or king piece
+            if (color == (int)Pieces.WhitePawn || king == true)     // check move place for white piece or king piece
             {
                 if (checkIsMoveOutOfBounds(SelectedPlace.X-1, SelectedPlace.Y - 1) == false)      // check is left-up place is out of bounds board
                 {
@@ -350,7 +285,7 @@ namespace checkers
                     }
                 }
             }
-            if (color == (int)Pieces.Black || king == true)     // check place for black piece or king
+            if (color == (int)Pieces.BlackPawn || king == true)     // check place for black piece or king
             {
                 if (checkIsMoveOutOfBounds(SelectedPlace.X + 1, SelectedPlace.Y - 1) == false)      // check is left-down place is out of bounds board
                 {
@@ -382,14 +317,14 @@ namespace checkers
             return moves;
         }
 
-        public object Clone()
+        public object Clone() // for deep copy object
         {
-            Board cloned = new Board();
-            cloned.whiteLeft = whiteLeft;
-            cloned.blackLeft = blackLeft;
-            cloned.blackKing = blackKing;
-            cloned.whiteKing = whiteKing;
-            for(int i = 0; i < Gameboard.GetLength(0); i++)
+            Player playerWhite = new Player(PlayerWhite.Name, PlayerWhite.PlayerColors, PlayerWhite.PawnsLeft, PlayerWhite.KingsLeft);
+            Player playerBlack = new Player(PlayerBlack.Name, PlayerBlack.PlayerColors, PlayerBlack.PawnsLeft, PlayerBlack.KingsLeft);
+            Board cloned = new Board(playerWhite, playerBlack);
+            cloned.Gameboard = new int[8, 8];
+
+            for (int i = 0; i < Gameboard.GetLength(0); i++)
             {
                 for(int j=0;j<Gameboard.GetLength(1); j++)
                 {
@@ -397,18 +332,6 @@ namespace checkers
                 }
             }
             return cloned;
-        }
-
-        /*
-        Evaluation function for MinMax algorithm
-        Pawn value = 1
-        King value = 2
-        */
-        public int evaluate()
-        {
-            int pawns = blackLeft - whiteLeft;
-            int kings = blackKing * 2 - whiteKing * 2;
-            return pawns + kings;
         }
     }
 }

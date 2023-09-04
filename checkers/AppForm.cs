@@ -8,27 +8,26 @@ namespace checkers
 {
     public partial class AppForm : Form
     {
-        Board board;
+        private Board _board;
         private PictureBox[,] _places = new PictureBox[8, 8];
         private Point _selectedPieceLocation {  get; set; }
-        Point[] _selectedMoves = new Point[10];
-        private bool showMoves;
-        private bool isAITurn = false;
-        private bool isAIPlay = true;
+        private Point[] _selectedMoves = new Point[10];
+        private bool _isAITurn = false;
+        private bool _isAIPlay;
+        private bool _isShowMoves;
 
-
-        public AppForm(bool isWhiteTurn, String Player1Name, String Player2Name, bool showMoves)
+        public AppForm(bool isWhiteTurn, string Player1Name, string Player2Name, bool isShowMoves, bool isAiPlay)
         {
             InitializeComponent();
-            this.showMoves = showMoves;
-
             InitializeGameBoard(isWhiteTurn, Player1Name, Player2Name); 
+            _isAIPlay = isAiPlay;
+            _isShowMoves = isShowMoves;
             NewTurn();
         }
 
-        private void InitializeGameBoard(bool isWhiteTurn, String Player1Name, String Player2Name) // create and display board with piece
+        private void InitializeGameBoard(bool isWhiteTurn, string Player1Name, string Player2Name) // create and display board with piece
         {
-            board = new Board(Player1Name, Player2Name, isWhiteTurn);
+            _board = new Board(Player1Name, Player2Name, isWhiteTurn,_isAIPlay);
 
             int xLoc = 0, yLoc = 0;
             Color[] colors = new Color[] { Color.White, Color.Gray };
@@ -46,12 +45,14 @@ namespace checkers
                     mainBoard.Controls.Add(_places[x, y]);
                     xLoc += 75;
                     white++;
-                    setPiece(new Point(x, y));
+                    SetPiece(new Point(x, y));
                 }
                 white++;
                 xLoc = 0;
                 yLoc += 75;
             }
+            PlayerWhiteNameLabel.Text = Player1Name;
+            PlayerBlackNameLabel.Text= Player2Name;
         }
 
         private void UpdateBoardUI() // update gameboard
@@ -60,19 +61,19 @@ namespace checkers
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    setPiece(new Point(x, y));
+                    SetPiece(new Point(x, y));
                 }
             }
         }
 
         private void UpdatePlayerUI() // update player text
         {
-            PlayerBlackScoreLabel.Text = board.playerBlack.Score.ToString();
-            PlayerWhiteScoreLabel.Text = board.playerWhite.Score.ToString();
-            if (board.isWin == true)
+            PlayerBlackScoreLabel.Text = _board.PlayerBlack.Score.ToString();
+            PlayerWhiteScoreLabel.Text = _board.PlayerWhite.Score.ToString();
+            if (_board.IsWin == true)
                 PlayerWin();
 
-            if (board.isWhiteTurn == true)
+            if (_board.IsWhiteTurn == true)
             {
                 PlayerWhiteTurn.Visible = true;
                 Player2Turn.Visible = false;
@@ -88,10 +89,10 @@ namespace checkers
         {
             mainBoard.Enabled = false;
             string name;
-            if (board.playerBlack.Score == 12)
-                name = board.playerBlack.name;
+            if (_board.PlayerBlack.Score == 12)
+                name = _board.PlayerBlack.Name;
             else
-                name = board.playerWhite.name;
+                name = _board.PlayerWhite.Name;
             Player2Turn.Visible = false;
             PlayerWhiteTurn.Visible = false;
             PLayerWinText.Text = name + " is win!";
@@ -100,30 +101,30 @@ namespace checkers
         private void NewTurn()
         {
             UpdatePlayerUI();
-            if (isAIPlay == false) // for player vs player
+            if (_isAIPlay == false)     // for player vs player
             {
-                if (board.isWhiteTurn)
-                    board.checkAllMovesForPlayer(2);
+                if (_board.IsWhiteTurn)
+                    _board.checkAllMovesForPlayer(2);
                 else
-                    board.checkAllMovesForPlayer(1);
+                    _board.checkAllMovesForPlayer(1);
             }
-            else // for player vs computer
+            else    // for player vs computer
             {
-                if (board.isWhiteTurn)
-                    board.checkAllMovesForPlayer(2);
+                if (_board.IsWhiteTurn)
+                    _board.checkAllMovesForPlayer(2);
                 else
                 {
-                    isAITurn = true;
+                    _isAITurn = true;
                     AITurn();
-                    board.changePlayerTurn();
-                    isAITurn = false;
-                    board.checkAllMovesForPlayer(2);
+                    _board.changePlayerTurn();
+                    _isAITurn = false;
+                    _board.checkAllMovesForPlayer(2);
                     UpdatePlayerUI();
                 }       
             }
         }
 
-        private void displayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
+        private void DisplayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
         {
             if (_places[moves[0].X, moves[0].Y].BackColor == Color.Gray)
             {
@@ -133,7 +134,10 @@ namespace checkers
                     if (move.IsEmpty) continue;
                     if (move != moves[0])
                     {
-                        _places[move.X, move.Y].BackColor = Color.Green;
+                        if (_isShowMoves == true)
+                            _places[move.X, move.Y].BackColor = Color.Green;
+                        else
+                            _places[move.X, move.Y].AccessibleName = "green";
                     }
                 }
             }
@@ -144,7 +148,14 @@ namespace checkers
                 {
                     if (move.IsEmpty) continue;
                     if (move != moves[0])
-                        _places[move.X, move.Y].BackColor = Color.Gray;
+                    {
+                        if (_isShowMoves == true)
+                            _places[move.X, move.Y].BackColor = Color.Gray;
+                        else
+                            _places[move.X, move.Y].AccessibleName = null;
+                    }
+                        
+
                 }
             }
         }
@@ -153,29 +164,29 @@ namespace checkers
         {
             selectedPlace.MouseClick += (sender2, e2) => // check first click on board
             {
-                if (isAITurn == false)
+                if (_isAITurn == false)
                 {
                     PictureBox piece = sender2 as PictureBox;
-                    int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
+                    
                     if (piece.Image != null)
                     {
+                        int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                         RemoveGreenPlaceFromBoard(_selectedMoves);
-                        if (board.isJump == false)
+                        if (_board.IsJump == false)
                         {
                             _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                            foreach (var moves in board.listMoves)
+                            foreach (var moves in _board.ListMoves)
                             {
                                 if (moves[0] == _selectedPieceLocation)
                                 {
                                     _selectedMoves = moves;
-                                    displayAvailableMovesForSelectedPiece(piece, moves);
+                                    DisplayAvailableMovesForSelectedPiece(piece, moves);
                                 }
                             }
                         }
                         else
                         {
-                            //_selectedPieceLocation = new Point();
-                            displayAvailableMovesForSelectedPiece(piece, board.listMoves[0]);
+                            DisplayAvailableMovesForSelectedPiece(piece, _board.ListMoves[0]);
                         }
 
                     }
@@ -184,39 +195,39 @@ namespace checkers
 
             selectedPlace.MouseClick += (sender3, e3) => // check second click on board
             {
-                if (isAITurn == false)
+                if (_isAITurn == false)
                 {
                     PictureBox piece = sender3 as PictureBox;
-                    int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
-                    if (selectedPlace.BackColor == Color.Green)
+                    if (selectedPlace.AccessibleName == "green" || selectedPlace.BackColor==Color.Green)
                     {
+                        int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                         Point GreenMove = new Point(placeLocation[0], placeLocation[1]);
-                        moveSelectedPiece(_selectedPieceLocation, GreenMove);
-                        board.changePlayerTurn();
+                        MoveSelectedPiece(_selectedPieceLocation, GreenMove);
+                        _board.changePlayerTurn();
                         NewTurn();
                     }
                 }
             };
         }
 
-        private void setPiece(Point piece) // set piece on board
+        private void SetPiece(Point piece) // set piece on board
         {
-            if (board.Gameboard[piece.X, piece.Y] == 1) // set black piece
+            if (_board.Gameboard[piece.X, piece.Y] == 1) // set black piece
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.blackPiece;
                 _places[piece.X, piece.Y].Image.Tag = "black";
             }
-            else if (board.Gameboard[piece.X, piece.Y] == 2) // set white piece
+            else if (_board.Gameboard[piece.X, piece.Y] == 2) // set white piece
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.whitePiece;
                 _places[piece.X, piece.Y].Image.Tag = "white";
             }
-            else if (board.Gameboard[piece.X, piece.Y] == 3) // set black king piece
+            else if (_board.Gameboard[piece.X, piece.Y] == 3) // set black king piece
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.blackPieceKing;
-                _places[piece.X, piece.Y].Image.Tag = "white";
+                _places[piece.X, piece.Y].Image.Tag = "black";
             }
-            else if (board.Gameboard[piece.X, piece.Y] == 4) // set white king piece
+            else if (_board.Gameboard[piece.X, piece.Y] == 4) // set white king piece
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.whitePieceKing;
                 _places[piece.X, piece.Y].Image.Tag = "white";
@@ -229,9 +240,9 @@ namespace checkers
             UpdatePlayerUI();
         }
 
-        private void moveSelectedPiece(Point selectedPiece, Point move) // move selected piece on selected move place
+        private void MoveSelectedPiece(Point selectedPiece, Point move) // move selected piece on selected move place
         {
-            board.makeMove(selectedPiece, move);
+            _board.MakeMove(selectedPiece, move);
             UpdateBoardUI();
             RemoveGreenPlaceFromBoard(_selectedMoves);
         }
@@ -242,17 +253,15 @@ namespace checkers
             {
                 if (move.IsEmpty) continue;
                 _places[move.X, move.Y].BackColor = Color.Gray;
+                _places[move.X, move.Y].AccessibleName = null;
             }
         }
 
-        private void AITurn()
+        private void AITurn() // turn play by AI
         {
-            MinMax AI = new MinMax(board, 3);
+            MinMax AI = new MinMax(_board, 3);
             AI.Calculate();
-            moveSelectedPiece(AI.BestMove[0], AI.BestMove[1]);
-            //board.makeMove(AI.bestMove[0], AI.bestMove[1]);
-            //moveSelectedPiece(move[0], move[1]);
-            //UpdateBoardUI();
+            MoveSelectedPiece(AI.BestMove[0], AI.BestMove[1]);
         }
 
         private void UpdateGameBoard(object sender, EventArgs e) // scanning board to check if was click on place
@@ -261,7 +270,7 @@ namespace checkers
             {
                 for (int y = 0; y < 8; y++)
                 {
-                    if (board.isWin==false)
+                    if (_board.IsWin==false)
                         MouseClickPlace(_places[x, y]);
                     else
                         break;

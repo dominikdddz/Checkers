@@ -23,10 +23,10 @@ namespace tests
             List<Point[]> ListMoves = new List<Point[]>();
             ListMoves.Add(centerPiece);
 
-            var board = new Board(tmpGameboard);
+            var board = new Board(tmpGameboard,1,0,0,0);
             board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, board.listMoves);
+            Assert.Equal(ListMoves, board.ListMoves);
         }
         [Fact]
         public void White_Piece_Moves_Left() // In left, piece has 1 move
@@ -46,10 +46,10 @@ namespace tests
             List<Point[]> ListMoves = new List<Point[]>();
             ListMoves.Add(LeftPiece);
 
-            var board = new Board(tmpGameboard);
+            var board = new Board(tmpGameboard,1,0,0,0);
             board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, board.listMoves);
+            Assert.Equal(ListMoves, board.ListMoves);
         }
         [Fact]
         public void White_Piece_Moves_Right() // In right, piece has 1 move
@@ -69,10 +69,10 @@ namespace tests
             List<Point[]> ListMoves = new List<Point[]>();
             ListMoves.Add(rightPiece);
 
-            var board = new Board(tmpGameboard);
+            var board = new Board(tmpGameboard, 1, 0, 0, 0);
             board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, board.listMoves);
+            Assert.Equal(ListMoves, board.ListMoves);
         }
         [Fact]
         public void White_Piece_Convert_To_King() // check is piece convert to king after move to up board line
@@ -88,8 +88,8 @@ namespace tests
                 { 0,0,0,0,0,0,0,0 }
             };
 
-            var board = new Board(tmpGameboard);
-            board.makeMove(new Point(1, 6), new Point(0, 5));
+            var board = new Board(tmpGameboard,1,0,0,0);
+            board.MakeMove(new Point(1, 6), new Point(0, 5));
 
             Assert.Equal(4, board.Gameboard[0, 5]);
         }
@@ -110,11 +110,10 @@ namespace tests
 
             List<Point[]> ListMoves = new List<Point[]>();
             ListMoves.Add(centerPiece);
-
-            var board = new Board(tmpGameboard);
+            var board = new Board(tmpGameboard,1,2,0,0);
             board.checkAllMovesForPlayer(2);
 
-            Assert.Equal(ListMoves, board.listMoves);
+            Assert.Equal(ListMoves, board.ListMoves);
         }
         [Fact]
         public void Piece_Capture() // White piece capture jump
@@ -129,8 +128,8 @@ namespace tests
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 }
             };
-            var board = new Board(tmpGameboard);
-            board.makeMove(new Point(5, 4), new Point(3, 2));
+            var board = new Board(tmpGameboard,1,2,0,0);
+            board.MakeMove(new Point(5, 4), new Point(3, 2));
 
             Assert.Equal(0, board.Gameboard[4,3]);
         }
