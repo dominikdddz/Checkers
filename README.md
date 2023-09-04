@@ -16,13 +16,13 @@ Project is created with:
 
 ## Features
 - [x] mode Player vs Player
+- [x] mode Player vs Computer (Minmax algorithm)
 
 ### To do
+- [ ] improvment evaluation function (Minmax algorithm)
 - [ ] add multiple capture jump
 - [ ] add force jump
 - [ ] undo moves
-- [ ] add variation size board
-- [ ] add mode Player vs Computer
 
 ## Screenshots
 The board at the beginning of the game
