@@ -11,23 +11,23 @@ namespace checkers
         private Board _board;
         private PictureBox[,] _places = new PictureBox[8, 8];
         private Point _selectedPieceLocation {  get; set; }
-        private Point[] _selectedMoves = new Point[10];
+        private Point[] _selectedMoves = new Point[4];
         private bool _isAITurn = false;
         private bool _isAIPlay;
         private bool _isShowMoves;
 
-        public AppForm(bool isWhiteTurn, string Player1Name, string Player2Name, bool isShowMoves, bool isAiPlay)
+        public AppForm(bool isWhiteTurn, string Player1Name, string Player2Name, bool isShowMoves, bool isForceJump, bool isAiPlay)
         {
             InitializeComponent();
-            InitializeGameBoard(isWhiteTurn, Player1Name, Player2Name); 
+            InitializeGameBoard(isWhiteTurn, Player1Name, Player2Name, isForceJump); 
             _isAIPlay = isAiPlay;
             _isShowMoves = isShowMoves;
             NewTurn();
         }
 
-        private void InitializeGameBoard(bool isWhiteTurn, string Player1Name, string Player2Name) // create and display board with piece
+        private void InitializeGameBoard(bool isWhiteTurn, string Player1Name, string Player2Name, bool isForceJump) // create and display board with piece
         {
-            _board = new Board(Player1Name, Player2Name, isWhiteTurn,_isAIPlay);
+            _board = new Board(Player1Name, Player2Name, isWhiteTurn, isForceJump, _isAIPlay);
 
             int xLoc = 0, yLoc = 0;
             Color[] colors = new Color[] { Color.White, Color.Gray };
@@ -104,58 +104,39 @@ namespace checkers
             if (_isAIPlay == false)     // for player vs player
             {
                 if (_board.IsWhiteTurn)
-                    _board.checkAllMovesForPlayer(2);
+                    _board.checkAllMoves(2);
                 else
-                    _board.checkAllMovesForPlayer(1);
+                    _board.checkAllMoves(1);
             }
             else    // for player vs computer
             {
                 if (_board.IsWhiteTurn)
-                    _board.checkAllMovesForPlayer(2);
+                    _board.checkAllMoves(2);
                 else
                 {
                     _isAITurn = true;
                     AITurn();
                     _board.changePlayerTurn();
                     _isAITurn = false;
-                    _board.checkAllMovesForPlayer(2);
+                    _board.checkAllMoves(2);
                     UpdatePlayerUI();
                 }       
             }
         }
 
-        private void DisplayAvailableMovesForSelectedPiece(PictureBox piece, Point[] moves) // display on board available moves for selected piece
+        private void DisplayAvailableMovesForSelectedPiece() // display on board available moves for selected piece
         {
-            if (_places[moves[0].X, moves[0].Y].BackColor == Color.Gray)
+            if (_places[_selectedPieceLocation.X, _selectedPieceLocation.Y].BackColor == Color.Gray)
             {
-                _places[moves[0].X, moves[0].Y].BackColor = Color.DarkBlue;
-                foreach (var move in moves)
+                foreach (var move in _board.ListMoves)
                 {
-                    if (move.IsEmpty) continue;
-                    if (move != moves[0])
+                    if (move[0] == _selectedPieceLocation)
                     {
+                        _places[_selectedPieceLocation.X, _selectedPieceLocation.Y].BackColor = Color.DarkBlue;
+                        _places[move[1].X, move[1].Y].AccessibleName = "green";
                         if (_isShowMoves == true)
-                            _places[move.X, move.Y].BackColor = Color.Green;
-                        else
-                            _places[move.X, move.Y].AccessibleName = "green";
+                            _places[move[1].X, move[1].Y].BackColor = Color.Green;   
                     }
-                }
-            }
-            else
-            {
-                _places[moves[0].X, moves[0].Y].BackColor = Color.Gray;
-                foreach (var move in moves)
-                {
-                    if (move.IsEmpty) continue;
-                    if (move != moves[0])
-                    {
-                        if (_isShowMoves == true)
-                            _places[move.X, move.Y].BackColor = Color.Gray;
-                        else
-                            _places[move.X, move.Y].AccessibleName = null;
-                    }
-                        
-
                 }
             }
         }
@@ -171,24 +152,9 @@ namespace checkers
                     if (piece.Image != null)
                     {
                         int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
-                        RemoveGreenPlaceFromBoard(_selectedMoves);
-                        if (_board.IsJump == false)
-                        {
-                            _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
-                            foreach (var moves in _board.ListMoves)
-                            {
-                                if (moves[0] == _selectedPieceLocation)
-                                {
-                                    _selectedMoves = moves;
-                                    DisplayAvailableMovesForSelectedPiece(piece, moves);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            DisplayAvailableMovesForSelectedPiece(piece, _board.ListMoves[0]);
-                        }
-
+                        RemoveGreenPlaceFromBoard();
+                        _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
+                        DisplayAvailableMovesForSelectedPiece();
                     }
                 }
             };
@@ -244,16 +210,18 @@ namespace checkers
         {
             _board.MakeMove(selectedPiece, move);
             UpdateBoardUI();
-            RemoveGreenPlaceFromBoard(_selectedMoves);
+            RemoveGreenPlaceFromBoard();
         }
 
-        private void RemoveGreenPlaceFromBoard(Point[] moves) // remove available moves from board
+        private void RemoveGreenPlaceFromBoard() // remove available moves from board
         {
-            foreach (Point move in moves)
+            foreach (Point[] move in _board.ListMoves)
             {
-                if (move.IsEmpty) continue;
-                _places[move.X, move.Y].BackColor = Color.Gray;
-                _places[move.X, move.Y].AccessibleName = null;
+                for(int i=0; i < move.Length; i++)
+                {
+                    _places[move[i].X, move[i].Y].BackColor = Color.Gray;
+                    _places[move[i].X, move[i].Y].AccessibleName = null;
+                }
             }
         }
 

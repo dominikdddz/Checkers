@@ -16,9 +16,10 @@ namespace checkers
         public string boardSize { get; set; }
         public string Player1Name { get; set; }
         public string Player2Name { get; set; }
-        public bool showMoves { get; set; }
-        public bool isWhiteTurn { get; set; }
-        public bool isAiPlay { get; set; }
+        public bool ShowMoves { get; set; }
+        public bool ForceJump { get; set; }
+        public bool IsWhiteTurn { get; set; }
+        public bool IsAiPlay { get; set; }
 
 
         public Settings()
@@ -35,11 +36,12 @@ namespace checkers
             if (CheckSettingsPvP() == true)
             {
                 boardSize = comboBoxBoardSizePvP.Text;
-                isWhiteTurn = WhichTurn(comboBoxFirstMovePvP.Text);
+                IsWhiteTurn = WhichTurn(comboBoxFirstMovePvP.Text);
                 Player1Name = textBoxPlayer1PvP.Text;
                 Player2Name = textBoxPlayer2PvP.Text;
-                showMoves = checkBoxShowMovesPvP.Checked;
-                isAiPlay = false;
+                ShowMoves = checkBoxShowMovesPvP.Checked;
+                ForceJump = checkBoxForceJumpPvP.Checked;
+                IsAiPlay = false;
                 this.Close();
             }
         }
@@ -47,14 +49,16 @@ namespace checkers
         {
             if (CheckSettingsPvE() == true)
             {
-                boardSize = comboBoxBoardSizePvP.Text;
-                isWhiteTurn = WhichTurn(comboBoxFirstMovePvP.Text);
+                boardSize = comboBoxBoardSizePvE.Text;
+                IsWhiteTurn = WhichTurn(comboBoxFirstMovePvE.Text);
                 Player1Name = textBoxPlayer1PvE.Text;
                 Player2Name = "Computer";
-                showMoves = checkBoxShowMovesPvP.Checked;
+                ShowMoves = checkBoxShowMovesPvE.Checked;
+                ForceJump = checkBoxForceJumpPvE.Checked;
+                IsAiPlay = true;
                 this.Close();
             }
-            isAiPlay = true;
+
         }
 
         private bool CheckSettingsPvP()
@@ -68,7 +72,7 @@ namespace checkers
             isCorrect = false;
             if (CheckPlayerName(textBoxPlayer2PvP, 2, true) == true)
                 isCorrect = true;
-            else 
+            else
                 return isCorrect;
             return isCorrect;
         }
@@ -100,7 +104,7 @@ namespace checkers
             }
             else if (Player.Text.Length > 10)
             {
-                if(isPvP == true)
+                if (isPvP == true)
                 {
                     labelErrorPvP.Text = "Player  " + Number + " name is too long!\n(max 15 words)";
                     labelErrorPvP.Visible = true;

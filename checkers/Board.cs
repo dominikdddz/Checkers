@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace checkers
+﻿namespace checkers
 {
     public class Board : ICloneable
     {
         public int[,] Gameboard { get; private set; }
         public bool IsWhiteTurn { get; private set; }
         public bool IsJump { get; private set; }
-        public bool IsNextJump { get; private set; }
-        public bool IsWin{get; private set; }
+        public bool IsWin {get; private set; }
 
         private int[] _whitePieces = new int[2] { 2, 4 };
         private int[] _blackPieces = new int[2] { 1, 3 };
         private static int _boardSize = 8;
+        private bool _isForceJump;
 
         public List<Point[]> ListMoves = new List<Point[]>();
         public Player PlayerWhite;
@@ -32,7 +24,7 @@ namespace checkers
             WhiteKing
         }
 
-        public Board(string playerWhiteName, string playerBlackName, bool isWhiteTurn, bool isPlayerVsAi) // default constructor
+        public Board(string playerWhiteName, string playerBlackName, bool isWhiteTurn, bool isForceJump, bool isPlayerVsAi) // default constructor
         {
             PlayerWhite = new Player(playerWhiteName, _whitePieces);
             PlayerBlack = new Player(playerBlackName, _blackPieces);
@@ -49,6 +41,8 @@ namespace checkers
             };
             IsWhiteTurn = isWhiteTurn;
             IsJump = false;
+            _isForceJump = isForceJump;
+
         }
         public Board(int[,] gameboard, int whitePawnsLeft, int blackPawnsLeft, int whiteKingsLeft, int blackKingsLeft) // custom constructor for custom board
         {
@@ -70,7 +64,6 @@ namespace checkers
         {
             IsWhiteTurn ^= true;
             IsJump = false;
-            IsNextJump = false;
         }
 
         public bool isPLayerWin(Player player)
@@ -81,7 +74,7 @@ namespace checkers
                 return false;
         }
 
-        public void checkAllMovesForComputer(int color)
+        public void checkAllMoves(int color)
         {
             int[] playerColors = GetColors(color, false);
             ListMoves.Clear();
@@ -108,44 +101,32 @@ namespace checkers
                     }
                 }
             }
+            if(_isForceJump==true)
+                checkJump();
         }
 
-        public void checkAllMovesForPlayer(int color)
+        private void checkJump()
         {
-            int[] playerColors = GetColors(color, false);
-            ListMoves.Clear();
-            for (int x = 0; x < 8; x++)
+            List<Point[]> tmpList = new List<Point[]>();
+            foreach (Point[] move in ListMoves)
             {
-                for (int y = 0; y < 8; y++)
+                Point[] tmpMoves = new Point[2];
+                if (Math.Pow(move[0].X - move[1].X, 2) > 2)
                 {
-                    if (playerColors.Contains(Gameboard[x, y]))
-                    {
-                        Point[] availableMoves = checkAvailableMoves(new Point(x, y));
-                        if (availableMoves[0].X + availableMoves[0].Y > 0)
-                        {
-                            Point[] piece = new Point[availableMoves.Length + 1];
-                            piece[0] = new Point(x, y);
-                            int i = 1;
-                            foreach (Point p in availableMoves)
-                            {
-                                if (p.X + p.Y > 0)
-                                {
-                                    piece[i] = p;
-                                    i++;
-                                }
-                            }
-                            ListMoves.Add(piece);
-                        }
-                    }
-                }
+                    tmpMoves[0] = move[0];
+                    tmpMoves[1] = move[1];
+                    tmpList.Add(tmpMoves);
+                    IsJump = true;
+                }    
             }
+            if (IsJump == true)
+                ListMoves = tmpList;
         }
 
         public void MakeMove(Point selectedPiece, Point newPosition)
         {
             if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // jump
             {
-                IsJump = true;
                 addScore(Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2]);
                 Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
@@ -158,10 +139,10 @@ namespace checkers
                 Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
             }
-            ChangeToKing(new Point(newPosition.X, newPosition.Y));
+            UpgradeToKing(new Point(newPosition.X, newPosition.Y));
         }
 
-        private void ChangeToKing(Point actualPosition) // check is piece change to king
+        private void UpgradeToKing(Point actualPosition) // check is piece change to king
         {
             int color = Gameboard[actualPosition.X, actualPosition.Y];
             if(color == (int)Pieces.WhitePawn && actualPosition.X == 0)
@@ -254,7 +235,7 @@ namespace checkers
             bool king = IsKing(color);
             int[] opponent = GetColors(color, true);
 
-            Point[] moves = (king == true) ? new Point[4] : new Point[2]; // if king == 4 then moves = 4 else moves = 2
+            Point[] moves = (king == true) ? new Point[4] : new Point[2]; // if piece == king then moves = 4 else moves = 2
 
             if (color == (int)Pieces.WhitePawn || king == true)     // check move place for white piece or king piece
             {

@@ -11,17 +11,17 @@ namespace checkers.AI
 {
     public class MinMax
     {
-        private Board Board;
-        private int Depth;
+        private Board _board;
+        private int _depth;
         public Point[] BestMove;
         public MinMax(Board board, int depth)
         {
-            Board = board;
-            Depth = depth;
+            _board = board;
+            _depth = depth;
         }
         public void Calculate()
         {
-            var result = MinMaxAlgorithm(Board, Depth, true);
+            var result = MinMaxAlgorithm(_board, _depth, true);
             BestMove = result.Item2;
         }
         private (int, Point[]) MinMaxAlgorithm(Board board, int depth, bool maxPlayer)
@@ -35,7 +35,7 @@ namespace checkers.AI
             {
                 int maxValue = int.MinValue;
                 Point[] Best = new Point[2];
-                board.checkAllMovesForComputer(1);
+                board.checkAllMoves(1);
                 foreach (var move in board.ListMoves)
                 {
                     Board child = (Board)board.Clone();
@@ -54,7 +54,7 @@ namespace checkers.AI
             {
                 int minValue = int.MaxValue;
                 Point[] Best = new Point[2];
-                board.checkAllMovesForComputer(2);
+                board.checkAllMoves(2);
                 foreach (var move in board.ListMoves)
                 {
                     Board child = (Board)board.Clone();

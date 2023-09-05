@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             groupBox1 = new GroupBox();
+            checkBoxForceJumpPvP = new CheckBox();
             checkBoxShowMovesPvP = new CheckBox();
             comboBoxFirstMovePvP = new ComboBox();
             label4 = new Label();
@@ -46,6 +47,7 @@
             tabPagePvP = new TabPage();
             tabPagePvE = new TabPage();
             groupBox3 = new GroupBox();
+            checkBoxForceJumpPvE = new CheckBox();
             checkBoxShowMovesPvE = new CheckBox();
             comboBoxFirstMovePvE = new ComboBox();
             label5 = new Label();
@@ -67,6 +69,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkBoxForceJumpPvP);
             groupBox1.Controls.Add(checkBoxShowMovesPvP);
             groupBox1.Controls.Add(comboBoxFirstMovePvP);
             groupBox1.Controls.Add(label4);
@@ -79,12 +82,22 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Game Settings";
             // 
+            // checkBoxForceJumpPvP
+            // 
+            checkBoxForceJumpPvP.AutoSize = true;
+            checkBoxForceJumpPvP.Location = new Point(7, 144);
+            checkBoxForceJumpPvP.Name = "checkBoxForceJumpPvP";
+            checkBoxForceJumpPvP.Size = new Size(87, 19);
+            checkBoxForceJumpPvP.TabIndex = 5;
+            checkBoxForceJumpPvP.Text = "Force Jump";
+            checkBoxForceJumpPvP.UseVisualStyleBackColor = true;
+            // 
             // checkBoxShowMovesPvP
             // 
             checkBoxShowMovesPvP.AutoSize = true;
             checkBoxShowMovesPvP.Checked = true;
             checkBoxShowMovesPvP.CheckState = CheckState.Checked;
-            checkBoxShowMovesPvP.Location = new Point(7, 146);
+            checkBoxShowMovesPvP.Location = new Point(7, 119);
             checkBoxShowMovesPvP.Name = "checkBoxShowMovesPvP";
             checkBoxShowMovesPvP.Size = new Size(93, 19);
             checkBoxShowMovesPvP.TabIndex = 4;
@@ -96,7 +109,7 @@
             comboBoxFirstMovePvP.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxFirstMovePvP.FormattingEnabled = true;
             comboBoxFirstMovePvP.Items.AddRange(new object[] { "Player 1", "Player 2" });
-            comboBoxFirstMovePvP.Location = new Point(7, 107);
+            comboBoxFirstMovePvP.Location = new Point(7, 90);
             comboBoxFirstMovePvP.Name = "comboBoxFirstMovePvP";
             comboBoxFirstMovePvP.Size = new Size(121, 23);
             comboBoxFirstMovePvP.TabIndex = 3;
@@ -104,7 +117,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(7, 89);
+            label4.Location = new Point(7, 72);
             label4.Name = "label4";
             label4.Size = new Size(65, 15);
             label4.TabIndex = 2;
@@ -115,7 +128,7 @@
             comboBoxBoardSizePvP.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxBoardSizePvP.FormattingEnabled = true;
             comboBoxBoardSizePvP.Items.AddRange(new object[] { "8x8" });
-            comboBoxBoardSizePvP.Location = new Point(7, 49);
+            comboBoxBoardSizePvP.Location = new Point(7, 37);
             comboBoxBoardSizePvP.MaxDropDownItems = 3;
             comboBoxBoardSizePvP.Name = "comboBoxBoardSizePvP";
             comboBoxBoardSizePvP.Size = new Size(121, 23);
@@ -124,7 +137,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(7, 31);
+            label3.Location = new Point(7, 19);
             label3.Name = "label3";
             label3.Size = new Size(64, 15);
             label3.TabIndex = 0;
@@ -236,6 +249,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(checkBoxForceJumpPvE);
             groupBox3.Controls.Add(checkBoxShowMovesPvE);
             groupBox3.Controls.Add(comboBoxFirstMovePvE);
             groupBox3.Controls.Add(label5);
@@ -248,12 +262,24 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Game Settings";
             // 
+            // checkBoxForceJumpPvE
+            // 
+            checkBoxForceJumpPvE.AutoSize = true;
+            checkBoxForceJumpPvE.Checked = true;
+            checkBoxForceJumpPvE.CheckState = CheckState.Checked;
+            checkBoxForceJumpPvE.Location = new Point(7, 144);
+            checkBoxForceJumpPvE.Name = "checkBoxForceJumpPvE";
+            checkBoxForceJumpPvE.Size = new Size(87, 19);
+            checkBoxForceJumpPvE.TabIndex = 6;
+            checkBoxForceJumpPvE.Text = "Force Jump";
+            checkBoxForceJumpPvE.UseVisualStyleBackColor = true;
+            // 
             // checkBoxShowMovesPvE
             // 
             checkBoxShowMovesPvE.AutoSize = true;
             checkBoxShowMovesPvE.Checked = true;
             checkBoxShowMovesPvE.CheckState = CheckState.Checked;
-            checkBoxShowMovesPvE.Location = new Point(7, 146);
+            checkBoxShowMovesPvE.Location = new Point(7, 119);
             checkBoxShowMovesPvE.Name = "checkBoxShowMovesPvE";
             checkBoxShowMovesPvE.Size = new Size(93, 19);
             checkBoxShowMovesPvE.TabIndex = 4;
@@ -264,8 +290,8 @@
             // 
             comboBoxFirstMovePvE.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxFirstMovePvE.FormattingEnabled = true;
-            comboBoxFirstMovePvE.Items.AddRange(new object[] { "Player 1", "Computer" });
-            comboBoxFirstMovePvE.Location = new Point(7, 107);
+            comboBoxFirstMovePvE.Items.AddRange(new object[] { "Player", "Computer" });
+            comboBoxFirstMovePvE.Location = new Point(7, 90);
             comboBoxFirstMovePvE.Name = "comboBoxFirstMovePvE";
             comboBoxFirstMovePvE.Size = new Size(121, 23);
             comboBoxFirstMovePvE.TabIndex = 3;
@@ -273,7 +299,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(7, 89);
+            label5.Location = new Point(7, 72);
             label5.Name = "label5";
             label5.Size = new Size(65, 15);
             label5.TabIndex = 2;
@@ -284,7 +310,7 @@
             comboBoxBoardSizePvE.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxBoardSizePvE.FormattingEnabled = true;
             comboBoxBoardSizePvE.Items.AddRange(new object[] { "8x8" });
-            comboBoxBoardSizePvE.Location = new Point(7, 49);
+            comboBoxBoardSizePvE.Location = new Point(7, 37);
             comboBoxBoardSizePvE.MaxDropDownItems = 3;
             comboBoxBoardSizePvE.Name = "comboBoxBoardSizePvE";
             comboBoxBoardSizePvE.Size = new Size(121, 23);
@@ -293,7 +319,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(7, 31);
+            label6.Location = new Point(7, 19);
             label6.Name = "label6";
             label6.Size = new Size(64, 15);
             label6.TabIndex = 0;
@@ -317,16 +343,16 @@
             textBoxPlayer1PvE.Name = "textBoxPlayer1PvE";
             textBoxPlayer1PvE.Size = new Size(133, 23);
             textBoxPlayer1PvE.TabIndex = 3;
-            textBoxPlayer1PvE.Text = "Player 1";
+            textBoxPlayer1PvE.Text = "Player";
             // 
             // label8
             // 
             label8.AutoSize = true;
             label8.Location = new Point(6, 31);
             label8.Name = "label8";
-            label8.Size = new Size(86, 15);
+            label8.Size = new Size(77, 15);
             label8.TabIndex = 1;
-            label8.Text = "Player 1 Name:";
+            label8.Text = "Player Name:";
             // 
             // labelErrorPvE
             // 
@@ -402,5 +428,7 @@
         private Label label8;
         private Label labelErrorPvE;
         private Button buttonStartGamePvE;
+        private CheckBox checkBoxForceJumpPvP;
+        private CheckBox checkBoxForceJumpPvE;
     }
 }

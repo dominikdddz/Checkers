@@ -24,7 +24,7 @@ namespace tests
             ListMoves.Add(centerPiece);
 
             var board = new Board(tmpGameboard,1,0,0,0);
-            board.checkAllMovesForPlayer(2);
+            board.checkAllMoves(2);
 
             Assert.Equal(ListMoves, board.ListMoves);
         }
@@ -47,7 +47,7 @@ namespace tests
             ListMoves.Add(LeftPiece);
 
             var board = new Board(tmpGameboard,1,0,0,0);
-            board.checkAllMovesForPlayer(2);
+            board.checkAllMoves(2);
 
             Assert.Equal(ListMoves, board.ListMoves);
         }
@@ -70,7 +70,7 @@ namespace tests
             ListMoves.Add(rightPiece);
 
             var board = new Board(tmpGameboard, 1, 0, 0, 0);
-            board.checkAllMovesForPlayer(2);
+            board.checkAllMoves(2);
 
             Assert.Equal(ListMoves, board.ListMoves);
         }
@@ -111,7 +111,7 @@ namespace tests
             List<Point[]> ListMoves = new List<Point[]>();
             ListMoves.Add(centerPiece);
             var board = new Board(tmpGameboard,1,2,0,0);
-            board.checkAllMovesForPlayer(2);
+            board.checkAllMoves(2);
 
             Assert.Equal(ListMoves, board.ListMoves);
         }
