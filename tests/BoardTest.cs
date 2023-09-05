@@ -10,7 +10,7 @@ namespace tests
         [Fact]
         public void Player_Win() // if player has 12 score then win
         {
-            var board = new Board("Player 1", "Player 2",true,false);
+            var board = new Board("Player 1", "Player 2",true,false,false);
             for (int i = 0; i < 12; i++)
                 board.PlayerWhite.IncreaseScore();
             var player = board.PlayerWhite;
@@ -21,7 +21,7 @@ namespace tests
         [Fact]
         public void First_White_Turn() // defualt first move is white piece
         {
-            var board = new Board("Player 1", "Player 2", true, false);
+            var board = new Board("Player 1", "Player 2", true, false, false);
 
             var turn = board.IsWhiteTurn;
 
