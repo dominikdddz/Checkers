@@ -17,11 +17,11 @@ Project is created with:
 ## Features
 - [x] mode Player vs Player
 - [x] mode Player vs Computer
+- [x] game Settings (force jump, show moves)
 
 ### To do
 - [ ] improvement evaluation function (Minmax algorithm)
-- [ ] add multiple capture jump
-- [ ] add force jump
+- [ ] add multiple jumps
 - [ ] undo moves
 
 ## Screenshots
