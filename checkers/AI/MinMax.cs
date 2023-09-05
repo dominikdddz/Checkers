@@ -74,10 +74,14 @@ namespace checkers.AI
         Evaluation function for MinMax algorithm
         Pawn value = 1
         King value = 2
-        Board position value = [1-4] 
+        Board position value = [1-4]
+        Player pawns == 0 => Win
+        Computer pawns == 0 => Lose
         */
         public int EvaluateMove(Board board)
         {
+            int win = int.MaxValue / 2;
+            int lose = int.MinValue / 2;
             int[] opponent = new int[2] { 1, 3 };
             int[,] boardValue = new int[8, 8] {
                 { 0,4,0,4,0,4,0,4 },
@@ -103,6 +107,10 @@ namespace checkers.AI
                     }
                 }
             }
+            if (board.PlayerBlack.PawnsLeft == 0)
+                return lose;
+            if (board.PlayerWhite.PawnsLeft == 0)
+                return win;
             int pawns = board.PlayerBlack.PawnsLeft - board.PlayerWhite.PawnsLeft;
             int kings = board.PlayerBlack.KingsLeft * 2 - board.PlayerWhite.KingsLeft * 2;
             int score = scoreComputer - scorePlayer;

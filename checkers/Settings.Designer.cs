@@ -334,7 +334,7 @@
             groupBox4.Size = new Size(208, 187);
             groupBox4.TabIndex = 7;
             groupBox4.TabStop = false;
-            groupBox4.Text = "Players Settings";
+            groupBox4.Text = "Player Settings";
             // 
             // textBoxPlayer1PvE
             // 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace checkers
 {
-    public class Player
+    public class Player : ICloneable
     {
         public string Name { get; private set; }
         public int Score { get; private set; }
@@ -29,6 +29,10 @@ namespace checkers
             PawnsLeft = 12;
             KingsLeft = 0;
         }
+        public Player()
+        {
+
+        }
         public void CapturePawns()
         {
             PawnsLeft -= 1;
@@ -45,6 +49,16 @@ namespace checkers
         public void IncreaseScore()
         {
             Score += 1;
+        }
+
+        public object Clone()
+        {
+            Player cloned = new Player();
+            cloned.PawnsLeft = PawnsLeft;
+            cloned.KingsLeft = KingsLeft;
+            cloned.PlayerColors = PlayerColors;
+            cloned.Score = Score;
+            return cloned;
         }
     }
 }

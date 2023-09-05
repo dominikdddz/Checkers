@@ -300,8 +300,10 @@
 
         public object Clone() // for deep copy object
         {
-            Player playerWhite = new Player(PlayerWhite.Name, PlayerWhite.PlayerColors, PlayerWhite.PawnsLeft, PlayerWhite.KingsLeft);
-            Player playerBlack = new Player(PlayerBlack.Name, PlayerBlack.PlayerColors, PlayerBlack.PawnsLeft, PlayerBlack.KingsLeft);
+            //Player playerWhite = new Player(PlayerWhite.Name, PlayerWhite.PlayerColors, PlayerWhite.PawnsLeft, PlayerWhite.KingsLeft);
+            //Player playerBlack = new Player(PlayerBlack.Name, PlayerBlack.PlayerColors, PlayerBlack.PawnsLeft, PlayerBlack.KingsLeft);
+            Player playerWhite = (Player)PlayerWhite.Clone();
+            Player playerBlack = (Player)PlayerBlack.Clone();
             Board cloned = new Board(playerWhite, playerBlack);
             cloned.Gameboard = new int[8, 8];
 

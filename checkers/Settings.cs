@@ -121,7 +121,7 @@ namespace checkers
         }
         private bool WhichTurn(string firstStart)
         {
-            if (firstStart == "Player 1")
+            if (firstStart == "Player 1" || firstStart == "Player")
                 return true;
             else
                 return false;

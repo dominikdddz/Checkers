@@ -9,7 +9,7 @@ internal static class Program
   
     static void Main()
     {
-        Board board = new Board("Player 1", "Player 2", true,false);
+        Board board = new Board("Player 1", "Player 2", true,false, false);
         int[,] tmpGameboard = new int[8, 8] {
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },
