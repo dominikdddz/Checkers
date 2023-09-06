@@ -5,6 +5,7 @@
         public int[,] Gameboard { get; private set; }
         public bool IsWhiteTurn { get; private set; }
         public bool IsJump { get; private set; }
+        public bool IsNextJump { get; private set; }
         public bool IsWin {get; private set; }
 
         private int[] _whitePieces = new int[2] { 2, 4 };
@@ -30,12 +31,12 @@
             PlayerBlack = new Player(playerBlackName, _blackPieces);
 
             Gameboard = new int[8, 8] { 
-                { 0,1,0,1,0,1,0,1 },
+                { 0,0,0,1,0,0,0,1 },
                 { 1,0,1,0,1,0,1,0 },
-                { 0,1,0,1,0,1,0,1 },
+                { 0,1,0,0,0,1,0,1 },
+                { 0,0,0,0,1,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },
-                { 0,0,0,0,0,0,0,0 },
-                { 2,0,2,0,2,0,2,0 },
+                { 2,0,2,0,2,0,1,0 },
                 { 0,2,0,2,0,2,0,2 },
                 { 2,0,2,0,2,0,2,0 }
             };
@@ -123,6 +124,28 @@
                 ListMoves = tmpList;
         }
 
+        private void NextJump(Point selectedPiece)
+        {
+            IsNextJump = false;
+            List<Point[]> tmpList = new List<Point[]>();
+            Point[] availableMoves = checkAvailableMoves(new Point(selectedPiece.X, selectedPiece.Y));
+            foreach (var move in availableMoves)
+            {
+                if (move.IsEmpty == false && Math.Pow(move.X - selectedPiece.X, 2) > 2)
+                {
+                    IsNextJump = true;
+                    Point[] piece = new Point[2];
+                    piece[0] = selectedPiece;
+                    piece[1] = move;
+                    tmpList.Add(piece);
+                }
+            }
+            if (IsNextJump == true)
+                ListMoves = tmpList;
+            else
+                IsNextJump = false;
+        }
+
         public void MakeMove(Point selectedPiece, Point newPosition)
         {
             if (Math.Pow(newPosition.X - selectedPiece.X, 2) > 2) // jump
@@ -131,8 +154,7 @@
                 Gameboard[newPosition.X, newPosition.Y] = Gameboard[selectedPiece.X, selectedPiece.Y];
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
                 Gameboard[(newPosition.X + selectedPiece.X) / 2, (newPosition.Y + selectedPiece.Y) / 2] = (int)Pieces.Empty;
-                
-                //checkMovesAfterJump(newPosition);
+                NextJump(newPosition);
             }
             else // move
             {
@@ -140,6 +162,8 @@
                 Gameboard[selectedPiece.X, selectedPiece.Y] = (int)Pieces.Empty;
             }
             UpgradeToKing(new Point(newPosition.X, newPosition.Y));
+            if(IsNextJump==false)
+                changePlayerTurn();
         }
 
         private void UpgradeToKing(Point actualPosition) // check is piece change to king

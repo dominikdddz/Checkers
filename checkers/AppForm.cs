@@ -116,7 +116,7 @@ namespace checkers
                 {
                     _isAITurn = true;
                     AITurn();
-                    _board.changePlayerTurn();
+                    //_board.changePlayerTurn();
                     _isAITurn = false;
                     _board.checkAllMoves(2);
                     UpdatePlayerUI();
@@ -148,11 +148,10 @@ namespace checkers
                 if (_isAITurn == false)
                 {
                     PictureBox piece = sender2 as PictureBox;
-                    
                     if (piece.Image != null)
                     {
                         int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
-                        RemoveGreenPlaceFromBoard();
+                        //RemoveGreenPlaceFromBoard();
                         _selectedPieceLocation = new Point(placeLocation[0], placeLocation[1]);
                         DisplayAvailableMovesForSelectedPiece();
                     }
@@ -169,7 +168,6 @@ namespace checkers
                         int[] placeLocation = piece.AccessibleDescription.Split(',').Select(int.Parse).ToArray();
                         Point GreenMove = new Point(placeLocation[0], placeLocation[1]);
                         MoveSelectedPiece(_selectedPieceLocation, GreenMove);
-                        _board.changePlayerTurn();
                         NewTurn();
                     }
                 }
@@ -197,6 +195,11 @@ namespace checkers
             {
                 _places[piece.X, piece.Y].Image = Properties.Resources.whitePieceKing;
                 _places[piece.X, piece.Y].Image.Tag = "white";
+            }
+            else if (_places[piece.X, piece.Y].BackColor == Color.Green) // remove green place
+            {
+                _places[piece.X, piece.Y].BackColor = Color.Gray;
+                _places[piece.X, piece.Y].AccessibleName = null;
             }
             else
             {
