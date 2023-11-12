@@ -1,5 +1,6 @@
-using checkers;
+using checkers.Classes;
 using System.Drawing;
+
 
 namespace tests
 {

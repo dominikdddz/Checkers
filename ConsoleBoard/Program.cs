@@ -1,5 +1,5 @@
-﻿using checkers;
-using checkers.AI;
+﻿using checkers.AI;
+using checkers.Classes;
 using Microsoft.VisualBasic.Devices;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -9,7 +9,7 @@ internal static class Program
   
     static void Main()
     {
-        Board board = new Board("Player 1", "Player 2", true,false, false);
+        Board board = new Board(true);
         int[,] tmpGameboard = new int[8, 8] {
                 { 0,0,0,0,0,0,0,0 },
                 { 0,0,0,0,0,0,0,0 },

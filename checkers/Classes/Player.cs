@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace checkers
+namespace checkers.Classes
 {
     public class Player : ICloneable
     {
@@ -15,7 +15,7 @@ namespace checkers
         public int[] PlayerColors { get; private set; }
         public Player(string name, int[] playerColors)
         {
-            this.Name = name;
+            Name = name;
             PlayerColors = playerColors;
             Score = 0;
             PawnsLeft = 12;
@@ -23,7 +23,7 @@ namespace checkers
         }
         public Player(string name, int[] playerColors, int pawnsLeft, int kingsLeft)
         {
-            this.Name = name;
+            Name = name;
             PlayerColors = playerColors;
             Score = 0;
             PawnsLeft = 12;

@@ -1,4 +1,4 @@
-namespace checkers
+namespace checkers.Classes
 {
     internal static class Program
     {
@@ -11,11 +11,11 @@ namespace checkers
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Settings FormSetting = new Settings();
+            SettingsForm FormSetting = new SettingsForm();
             Application.Run(FormSetting);
             if (FormSetting.isCorrect == true)
             {
-                AppForm checkersForm = new AppForm(FormSetting.IsWhiteTurn, FormSetting.Player1Name, FormSetting.Player2Name,FormSetting.ShowMoves, FormSetting.ForceJump, FormSetting.IsAiPlay);
+                CheckersForm checkersForm = new CheckersForm();
                 checkersForm.ShowDialog();
             }
         }

@@ -1,6 +1,6 @@
 ﻿namespace checkers
 {
-    partial class Settings
+    partial class SettingsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             groupBox1 = new GroupBox();
             checkBoxForceJumpPvP = new CheckBox();
             checkBoxShowMovesPvP = new CheckBox();
@@ -41,7 +41,6 @@
             textBoxPlayer1PvP = new TextBox();
             label2 = new Label();
             label1 = new Label();
-            labelErrorPvP = new Label();
             buttonStartGamePvP = new Button();
             tabControlSetting = new TabControl();
             tabPagePvP = new TabPage();
@@ -56,7 +55,6 @@
             groupBox4 = new GroupBox();
             textBoxPlayer1PvE = new TextBox();
             label8 = new Label();
-            labelErrorPvE = new Label();
             buttonStartGamePvE = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -191,17 +189,6 @@
             label1.TabIndex = 1;
             label1.Text = "Player 1 Name:";
             // 
-            // labelErrorPvP
-            // 
-            labelErrorPvP.ForeColor = Color.Red;
-            labelErrorPvP.Location = new Point(7, 196);
-            labelErrorPvP.Name = "labelErrorPvP";
-            labelErrorPvP.Size = new Size(422, 36);
-            labelErrorPvP.TabIndex = 5;
-            labelErrorPvP.Text = "Nazwa jest zbyt długa";
-            labelErrorPvP.TextAlign = ContentAlignment.MiddleCenter;
-            labelErrorPvP.Visible = false;
-            // 
             // buttonStartGamePvP
             // 
             buttonStartGamePvP.Location = new Point(181, 235);
@@ -219,19 +206,18 @@
             tabControlSetting.Location = new Point(1, 1);
             tabControlSetting.Name = "tabControlSetting";
             tabControlSetting.SelectedIndex = 0;
-            tabControlSetting.Size = new Size(445, 310);
+            tabControlSetting.Size = new Size(445, 308);
             tabControlSetting.TabIndex = 6;
             // 
             // tabPagePvP
             // 
             tabPagePvP.Controls.Add(groupBox1);
             tabPagePvP.Controls.Add(groupBox2);
-            tabPagePvP.Controls.Add(labelErrorPvP);
             tabPagePvP.Controls.Add(buttonStartGamePvP);
             tabPagePvP.Location = new Point(4, 24);
             tabPagePvP.Name = "tabPagePvP";
             tabPagePvP.Padding = new Padding(3);
-            tabPagePvP.Size = new Size(437, 282);
+            tabPagePvP.Size = new Size(437, 280);
             tabPagePvP.TabIndex = 1;
             tabPagePvP.Text = "Player vs Player";
             // 
@@ -239,11 +225,10 @@
             // 
             tabPagePvE.Controls.Add(groupBox3);
             tabPagePvE.Controls.Add(groupBox4);
-            tabPagePvE.Controls.Add(labelErrorPvE);
             tabPagePvE.Controls.Add(buttonStartGamePvE);
             tabPagePvE.Location = new Point(4, 24);
             tabPagePvE.Name = "tabPagePvE";
-            tabPagePvE.Size = new Size(437, 282);
+            tabPagePvE.Size = new Size(437, 280);
             tabPagePvE.TabIndex = 2;
             tabPagePvE.Text = "Player vs Computer";
             // 
@@ -354,17 +339,6 @@
             label8.TabIndex = 1;
             label8.Text = "Player Name:";
             // 
-            // labelErrorPvE
-            // 
-            labelErrorPvE.ForeColor = Color.Red;
-            labelErrorPvE.Location = new Point(7, 196);
-            labelErrorPvE.Name = "labelErrorPvE";
-            labelErrorPvE.Size = new Size(422, 36);
-            labelErrorPvE.TabIndex = 9;
-            labelErrorPvE.Text = "Nazwa jest zbyt długa";
-            labelErrorPvE.TextAlign = ContentAlignment.MiddleCenter;
-            labelErrorPvE.Visible = false;
-            // 
             // buttonStartGamePvE
             // 
             buttonStartGamePvE.Location = new Point(181, 235);
@@ -375,7 +349,7 @@
             buttonStartGamePvE.UseVisualStyleBackColor = true;
             buttonStartGamePvE.Click += ButtonStartPvE;
             // 
-            // Settings
+            // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -383,9 +357,9 @@
             ClientSize = new Size(446, 310);
             Controls.Add(tabControlSetting);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "Settings";
+            Name = "SettingsForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Checkers";
+            Text = "Settings";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -412,7 +386,6 @@
         private Label label4;
         private TextBox textBoxPlayer2PvP;
         private TextBox textBoxPlayer1PvP;
-        private Label labelErrorPvP;
         private CheckBox checkBoxShowMovesPvP;
         private TabControl tabControlSetting;
         private TabPage tabPagePvP;
@@ -426,7 +399,6 @@
         private GroupBox groupBox4;
         private TextBox textBoxPlayer1PvE;
         private Label label8;
-        private Label labelErrorPvE;
         private Button buttonStartGamePvE;
         private CheckBox checkBoxForceJumpPvP;
         private CheckBox checkBoxForceJumpPvE;
